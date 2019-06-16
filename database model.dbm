@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1" last-position="0,47" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="new_database" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="utility_pole">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="919" y="458"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="pole_owner">
+		<type name="text" length="0"/>
+	</column>
+	<column name="pole_owner_primary_label">
+		<type name="text" length="0"/>
+	</column>
+	<column name="location">
+		<type name="point" length="0"/>
+	</column>
+	<constraint name="utility_pole_id_pk" type="pk-constr" table="public.utility_pole">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="pole_attachment">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="520" y="420"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="height_feet">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="height_inches">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="height_meters">
+		<type name="real" length="0"/>
+	</column>
+	<column name="attached_pole" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="pole_attachement_id_pk" type="pk-constr" table="public.pole_attachment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="strand_line">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="40" y="120"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="strand_line_id_pk" type="pk-constr" table="public.strand_line">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="strand_attachment">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="80" y="220"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="attachment_type" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="pole_attachment_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="strand_attachment_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="strand_line_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="attachment squence">
+		<type name="real" length="0"/>
+		<comment><![CDATA[Used to sort attachments into their order that they occur along the strand]]></comment>
+	</column>
+	<constraint name="inheritance_option_attachment_type_check" type="ck-constr" table="public.strand_attachment">
+			<expression><![CDATA[(attachment_type = 1 and pole_attachment_id is not NULL and strand_attachment_id is NULL) OR (attachment_type = 2 and pole_attachment_id is NULL and strand_attachment_id is not NULL)]]></expression>
+		<comment><![CDATA[Make sure this pure virtual base class ends up being one of two child classes]]></comment>
+	</constraint>
+	<constraint name="strand_attachment_id_pk" type="pk-constr" table="public.strand_attachment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="strand_to_strand_attachment">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Should we denormalize and cache a point of where this strand attachment ends up being on the parent strand?]]></comment>
+	<position x="740" y="140"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="attached_to_strand" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="distance_along_attached_to_strand" not-null="true">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="strand_to_strand_attachment_id_pk" type="pk-constr" table="public.strand_to_strand_attachment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="strand_guy_wire">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="100" y="500"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="standoff_pipe" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="pole_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="azimuth_from_pole">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="azimuth_is_degrees" type="ck-constr" table="public.strand_guy_wire">
+			<expression><![CDATA[azimuth_from_pole >= 0 and azimuth_from_pole < 360]]></expression>
+	</constraint>
+	<constraint name="strand_guy_wire_pk" type="pk-constr" table="public.strand_guy_wire">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_enclosure">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1960" y="20"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="longlat">
+		<type name="point" length="0"/>
+	</column>
+	<constraint name="fiber_enclosure_id" type="pk-constr" table="public.fiber_enclosure">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_splitter">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1160" y="240"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inputs_count" not-null="true" default-value="1">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="outputs_count">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="splitter_type_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="optical_splitter_id_pk" type="pk-constr" table="public.optical_splitter">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="enclosure_port">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1540" y="20"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_enclosure_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inside_port_type_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="outside_port_type_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="port_label">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="enclosure_port_id_pk" type="pk-constr" table="public.enclosure_port">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_connector_types">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1180" y="60"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="gender" default-value="M">
+		<type name="char" length="0"/>
+	</column>
+	<constraint name="optical_connector_types_pk" type="pk-constr" table="public.optical_connector_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•name•gender⸣
+•SC/APC•M⸣
+•SC/APC•F⸣
+•SC/UPC•M⸣
+•SC/UPC•F⸣
+•LC/UPC•M⸣
+•LC/UPC•F⸣
+•LC/APC•M⸣
+•LC/APC•F]]>
+	</initial-data>
+</table>
+
+<table name="enclosure_cable_entry">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1540" y="240"/>
+	<column name="id" not-null="true" identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="cable_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="direction">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[1 for asending cable footage at entry, -1 for descending cable footage at entry]]></comment>
+	</column>
+	<column name="fiber_enclosure_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="enclosure_cable_entry_id_pk" type="pk-constr" table="public.enclosure_cable_entry">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
+	<columns names="attached_pole" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_pole_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.strand_attachment">
+	<columns names="pole_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_strand_line" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_line" table="public.strand_attachment">
+	<columns names="strand_line_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_strand_to_strand" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_to_strand_attachment" table="public.strand_attachment">
+	<columns names="strand_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_attached_to_strandline" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_line" table="public.strand_to_strand_attachment">
+	<columns names="attached_to_strand" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_pole_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.strand_guy_wire">
+	<columns names="pole_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_fiber_enclosure" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_enclosure" table="public.enclosure_port">
+	<columns names="fiber_enclosure_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_inside_connector_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.enclosure_port">
+	<columns names="inside_port_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_outside_connector_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.enclosure_port">
+	<columns names="outside_port_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="ref_fiber_enclosure_id" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_enclosure" table="public.enclosure_cable_entry">
+	<columns names="fiber_enclosure_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_pole_attachment_utility_pole" type="relfk"
+	 src-table="public.pole_attachment"
+	 dst-table="public.utility_pole" reference-fk="pole_reference"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_attachment_pole_attachment" type="relfk"
+	 src-table="public.strand_attachment"
+	 dst-table="public.pole_attachment" reference-fk="ref_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_attachment_strand_line" type="relfk"
+	 src-table="public.strand_attachment"
+	 dst-table="public.strand_line" reference-fk="ref_strand_line"
+	 src-required="false" dst-required="false">
+	<label ref-type="src-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="rel_strand_to_strand_attachment_strand_line" type="relfk"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_line" reference-fk="ref_attached_to_strandline"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_attachment_strand_to_strand_attachment" type="relfk"
+	 src-table="public.strand_attachment"
+	 dst-table="public.strand_to_strand_attachment" reference-fk="ref_strand_to_strand"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_guy_wire_pole_attachment" type="relfk"
+	 src-table="public.strand_guy_wire"
+	 dst-table="public.pole_attachment" reference-fk="ref_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_fiber_enclosure" type="relfk"
+	 src-table="public.enclosure_port"
+	 dst-table="public.fiber_enclosure" reference-fk="ref_fiber_enclosure"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_optical_connector_types" type="relfk"
+	 src-table="public.enclosure_port"
+	 dst-table="public.optical_connector_types" reference-fk="ref_inside_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_optical_connector_types1" type="relfk"
+	 src-table="public.enclosure_port"
+	 dst-table="public.optical_connector_types" reference-fk="ref_outside_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_cable_entry_fiber_enclosure" type="relfk"
+	 src-table="public.enclosure_cable_entry"
+	 dst-table="public.fiber_enclosure" reference-fk="ref_fiber_enclosure_id"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
