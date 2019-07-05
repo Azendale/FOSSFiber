@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="0,1142" last-zoom="0.8" max-obj-count="34"
+<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="874,0" last-zoom="0.8" max-obj-count="42"
 	 default-schema="public" default-owner="postgres">
 <database name="new_database" is-template="false" allow-conns="true">
 </database>
@@ -11,7 +11,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<table name="utility_pole" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="utility_pole" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1180" y="1360"/>
@@ -33,7 +33,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="pole_attachment" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="pole_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="600" y="1360"/>
@@ -58,7 +58,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_line" layer="0" collapse-mode="2" max-obj-count="1">
+<table name="strand_line" layer="0" collapse-mode="1" max-obj-count="1">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="640" y="1600"/>
@@ -71,7 +71,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_attachment" layer="0" collapse-mode="2" max-obj-count="7">
+<table name="strand_attachment" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="60" y="1280"/>
@@ -104,7 +104,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_to_strand_attachment" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="strand_to_strand_attachment" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Should we denormalize and cache a point of where this strand attachment ends up being on the parent strand?]]></comment>
@@ -124,7 +124,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_guy_wire" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="strand_guy_wire" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1220" y="1580"/>
@@ -149,7 +149,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_enclosure" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="fiber_enclosure" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="820" y="1060"/>
@@ -165,7 +165,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="optical_splitter" layer="0" collapse-mode="2" max-obj-count="7">
+<table name="optical_splitter" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="60" y="60"/>
@@ -193,7 +193,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="enclosure_port" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="enclosure_port" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1200" y="340"/>
@@ -218,7 +218,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="optical_connector_types" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="optical_connector_types" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1820" y="580"/>
@@ -248,7 +248,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</initial-data>
 </table>
 
-<table name="enclosure_cable_entry" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="enclosure_cable_entry" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1260" y="620"/>
@@ -266,12 +266,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="fiber_enclosure_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
+	<column name="marking_tape_color">
+		<type name="text" length="0"/>
+		<comment><![CDATA[If cable entry into the enclosure is marked with tape, what color is it?]]></comment>
+	</column>
 	<constraint name="enclosure_cable_entry_id_pk" type="pk-constr" table="public.enclosure_cable_entry">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="fiber_cable" layer="0" collapse-mode="2" max-obj-count="9">
+<table name="fiber_cable" layer="0" collapse-mode="1" max-obj-count="9">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Need to figure out how to record and represent fiber cable structure. (Ribbon, loose tube, fiber count, etc. Armored, dielectric, gel?]]></comment>
@@ -307,7 +311,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="length_units" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="length_units" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2380" y="360"/>
@@ -331,7 +335,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</initial-data>
 </table>
 
-<table name="fiber_group_types" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="fiber_group_types" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3040" y="380"/>
@@ -347,7 +351,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_group" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="fiber_group" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Describes the structure/fiber groupings in a cable. A massive cable with ]]></comment>
@@ -374,7 +378,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="fiber" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[TODO: should this be one fiber for the whole length of the cable, or multiple rows in this table for when midspans happen in a cable?]]></comment>
@@ -397,7 +401,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_identifier_index" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="fiber_identifier_index" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Used to store the information about which fiber in a cable. Not columns on the fiber table because of the potential for varying numbers/levels of grouping in a cable. For example, on the huge fiber count cable, you could have multiple "buffer tubes" with multiple ribbons inside, and inside each ribbon multiple fibers.]]></comment>
@@ -420,7 +424,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_cable_slack_loop" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="fiber_cable_slack_loop" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2480" y="840"/>
@@ -439,12 +443,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="real" length="0"/>
 		<comment><![CDATA[footage or meterage (decided by the fiber_cable.length_units on the related fiber_cable) of where the slack loop is along the cable. Where the slack loop "starts" when going down the cable in ascending measurement numbers.]]></comment>
 	</column>
+	<column name="latlong">
+		<type name="point" length="0"/>
+	</column>
 	<constraint name="fiber_cable_slack_loop_pk" type="pk-constr" table="public.fiber_cable_slack_loop">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="optical_splitter_types" layer="0" collapse-mode="2" max-obj-count="3">
+<table name="optical_splitter_types" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="620" y="140"/>
@@ -470,7 +477,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</initial-data>
 </table>
 
-<table name="optical_splitter_styles" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="optical_splitter_styles" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="660" y="340"/>
@@ -493,7 +500,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</initial-data>
 </table>
 
-<table name="optical_splitter_output" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="optical_splitter_output" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="720" y="520"/>
@@ -519,7 +526,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="optical_splitter_input" layer="0" collapse-mode="2" max-obj-count="6">
+<table name="optical_splitter_input" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="720" y="760"/>
@@ -545,7 +552,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="optical_connector" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="optical_connector" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1720" y="140"/>
@@ -561,7 +568,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_end?" layer="0" collapse-mode="2" max-obj-count="2">
+<table name="fiber_end?" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1160" y="140"/>
@@ -573,12 +580,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="integer" length="0"/>
 		<comment><![CDATA[Only set if the end of the fiber came from the factory with an optical connector. Bare fiber doesn't count - pigtails spliced on are a (short) separate cable with a splice]]></comment>
 	</column>
+	<column name="has_connector" default-value="false">
+		<type name="bool" length="0"/>
+		<comment><![CDATA[does the end of this fiber have a factory installed connector?]]></comment>
+	</column>
 	<constraint name="fiber_end?_pk" type="pk-constr" table="public.&quot;fiber_end?&quot;">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="cable_fiber_end?" layer="0" collapse-mode="2" max-obj-count="4">
+<table name="cable_fiber_end?" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1780" y="340"/>
@@ -600,6 +611,116 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
+
+<table name="optical_connector_connection" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Connection/mating of two optical connectors. Order has no particular meaning.]]></comment>
+	<position x="2100" y="20"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="optical_connector_a_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="optical_connector_b_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="optical_connector_connection_pk" type="pk-constr" table="public.optical_connector_connection">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="optical_connectors_a_and_b_must_be_different" type="ck-constr" table="public.optical_connector_connection">
+			<expression><![CDATA[optical_connector_a_id <> optical_connector_b_id]]></expression>
+	</constraint>
+</table>
+
+<table name="fiber_splice" layer="0" collapse-mode="1" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1440" y="0"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fusion" default-value="true">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="estimated_loss">
+		<type name="real" length="0"/>
+	</column>
+	<column name="fiber_end_a_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_b_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="fiber_end_cant_splice_to_itself" type="ck-constr" table="public.fiber_splice">
+			<expression><![CDATA[fiber_end_a_id <> fiber_end_b_id]]></expression>
+	</constraint>
+	<constraint name="fiber_splice_pk" type="pk-constr" table="public.fiber_splice">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<view name="v_fiber_splice_sym" layer="0" collapse-mode="2" max-obj-count="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[View to show splices in a way that it doesn't matter what order you put the spliced fibers in.]]></comment>
+	<position x="1780" y="20"/>
+	<reference>
+		<expression><![CDATA[select fiber_splice.id, fiber_splice.fiber_end_a_id, fiber_splice.fiber_end_b_id
+union all
+select fiber_splice.id, fiber_splice.fiber_end_b_id, fiber_splice.fiber_end_a_id]]></expression>
+	<column name="id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_a_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_b_id">
+		<type name="integer" length="0"/>
+	</column>
+		<reftable name="public.fiber_splice"/>
+	</reference>
+</view>
+
+<view name="v_optical_connector_connection_sym" layer="0" collapse-mode="2" max-obj-count="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2680" y="40"/>
+	<reference>
+		<expression><![CDATA[select
+optical_connector_connection.id,
+optical_connector_connection.optical_connector_a_id,
+optical_connector_connection.optical_connector_b_id
+union all
+optical_connector_connection.id,
+optical_connector_connection.optical_connector_b_id,
+optical_connector_connection.optical_connector_a_id
+]]></expression>
+	<column name="id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="optical_connector_a_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="optical_connector_b_id">
+		<type name="integer" length="0"/>
+	</column>
+		<reftable name="public.optical_connector_connection"/>
+	</reference>
+</view>
+
+<relationship name="rel_v_optical_connector_connection_sym_optical_connector_4443" type="reltv" layer="0"
+	 src-table="public.v_optical_connector_connection_sym"
+	 dst-table="public.optical_connector_connection"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_fiber_splice_sym_fiber_splice" type="reltv" layer="0"
+	 src-table="public.v_fiber_splice_sym"
+	 dst-table="public.fiber_splice"
+	 src-required="false" dst-required="false"/>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
@@ -775,6 +896,30 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="optical_connection_requires_connector_a" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector" table="public.optical_connector_connection">
+	<columns names="optical_connector_a_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_connection_requires_connector_b" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector" table="public.optical_connector_connection">
+	<columns names="optical_connector_b_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="splice_requires_fiber_a" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_splice">
+	<columns names="fiber_end_a_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="splice_requires_fiber_b" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_splice">
+	<columns names="fiber_end_b_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_pole_attachment_utility_pole" type="relfk" layer="0"
 	 src-table="public.pole_attachment"
 	 dst-table="public.utility_pole" reference-fk="pole_reference"
@@ -918,6 +1063,26 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="&quot;rel_optical_splitter_input_fiber_end?&quot;" type="relfk" layer="0"
 	 src-table="public.optical_splitter_input"
 	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="optical_splitter_inputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_connector_connection_optical_connector" type="relfk" layer="0"
+	 src-table="public.optical_connector_connection"
+	 dst-table="public.optical_connector" reference-fk="optical_connection_requires_connector_a"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_connector_connection_optical_connector1" type="relfk" layer="0"
+	 src-table="public.optical_connector_connection"
+	 dst-table="public.optical_connector" reference-fk="optical_connection_requires_connector_b"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_fiber_splice_fiber_end?&quot;" type="relfk" layer="0"
+	 src-table="public.fiber_splice"
+	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="splice_requires_fiber_a"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_fiber_splice_fiber_end?1&quot;" type="relfk" layer="0"
+	 src-table="public.fiber_splice"
+	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="splice_requires_fiber_b"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
