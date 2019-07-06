@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="874,0" last-zoom="0.8" max-obj-count="42"
+<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="351,0" last-zoom="0.8" max-obj-count="39"
 	 default-schema="public" default-owner="postgres">
 <database name="new_database" is-template="false" allow-conns="true">
 </database>
@@ -612,30 +612,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="optical_connector_connection" layer="0" collapse-mode="1" max-obj-count="4">
-	<schema name="public"/>
-	<role name="postgres"/>
-	<comment><![CDATA[Connection/mating of two optical connectors. Order has no particular meaning.]]></comment>
-	<position x="2100" y="20"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="optical_connector_a_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="optical_connector_b_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<constraint name="optical_connector_connection_pk" type="pk-constr" table="public.optical_connector_connection">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="optical_connectors_a_and_b_must_be_different" type="ck-constr" table="public.optical_connector_connection">
-			<expression><![CDATA[optical_connector_a_id <> optical_connector_b_id]]></expression>
-	</constraint>
-</table>
-
-<table name="fiber_splice" layer="0" collapse-mode="1" max-obj-count="6">
+<table name="fiber_connection" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1440" y="0"/>
@@ -643,35 +620,29 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="fusion" default-value="true">
-		<type name="bool" length="0"/>
-	</column>
-	<column name="estimated_loss">
-		<type name="real" length="0"/>
-	</column>
 	<column name="fiber_end_a_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="fiber_end_b_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<constraint name="fiber_end_cant_splice_to_itself" type="ck-constr" table="public.fiber_splice">
+	<constraint name="fiber_end_cant_splice_to_itself" type="ck-constr" table="public.fiber_connection">
 			<expression><![CDATA[fiber_end_a_id <> fiber_end_b_id]]></expression>
 	</constraint>
-	<constraint name="fiber_splice_pk" type="pk-constr" table="public.fiber_splice">
+	<constraint name="fiber_connection_pk" type="pk-constr" table="public.fiber_connection">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<view name="v_fiber_splice_sym" layer="0" collapse-mode="2" max-obj-count="1">
+<view name="v_fiber_connection_sym" layer="0" collapse-mode="2" max-obj-count="1">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[View to show splices in a way that it doesn't matter what order you put the spliced fibers in.]]></comment>
-	<position x="1780" y="20"/>
+	<comment><![CDATA[View to show fiber connections in a way that it doesn't matter what order you put the fibers in.]]></comment>
+	<position x="1160" y="20"/>
 	<reference>
-		<expression><![CDATA[select fiber_splice.id, fiber_splice.fiber_end_a_id, fiber_splice.fiber_end_b_id
+		<expression><![CDATA[select fiber_connection.id, fiber_connection.fiber_end_a_id, fiber_connection.fiber_end_b_id
 union all
-select fiber_splice.id, fiber_splice.fiber_end_b_id, fiber_splice.fiber_end_a_id]]></expression>
+select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fiber_end_a_id]]></expression>
 	<column name="id">
 		<type name="integer" length="0"/>
 	</column>
@@ -681,46 +652,36 @@ select fiber_splice.id, fiber_splice.fiber_end_b_id, fiber_splice.fiber_end_a_id
 	<column name="fiber_end_b_id">
 		<type name="integer" length="0"/>
 	</column>
-		<reftable name="public.fiber_splice"/>
+		<reftable name="public.fiber_connection"/>
 	</reference>
 </view>
-
-<view name="v_optical_connector_connection_sym" layer="0" collapse-mode="2" max-obj-count="1">
-	<schema name="public"/>
-	<role name="postgres"/>
-	<position x="2680" y="40"/>
-	<reference>
-		<expression><![CDATA[select
-optical_connector_connection.id,
-optical_connector_connection.optical_connector_a_id,
-optical_connector_connection.optical_connector_b_id
-union all
-optical_connector_connection.id,
-optical_connector_connection.optical_connector_b_id,
-optical_connector_connection.optical_connector_a_id
-]]></expression>
-	<column name="id">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="optical_connector_a_id">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="optical_connector_b_id">
-		<type name="integer" length="0"/>
-	</column>
-		<reftable name="public.optical_connector_connection"/>
-	</reference>
-</view>
-
-<relationship name="rel_v_optical_connector_connection_sym_optical_connector_4443" type="reltv" layer="0"
-	 src-table="public.v_optical_connector_connection_sym"
-	 dst-table="public.optical_connector_connection"
-	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_v_fiber_splice_sym_fiber_splice" type="reltv" layer="0"
-	 src-table="public.v_fiber_splice_sym"
-	 dst-table="public.fiber_splice"
+	 src-table="public.v_fiber_connection_sym"
+	 dst-table="public.fiber_connection"
 	 src-required="false" dst-required="false"/>
+
+<table name="fiber_splice" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2040" y="0"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_connection_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fusion" default-value="true">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="estimated_loss" default-value="0.3">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="fiber_splice_pk" type="pk-constr" table="public.fiber_splice">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
@@ -896,27 +857,21 @@ optical_connector_connection.optical_connector_a_id
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="optical_connection_requires_connector_a" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector" table="public.optical_connector_connection">
-	<columns names="optical_connector_a_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="optical_connection_requires_connector_b" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector" table="public.optical_connector_connection">
-	<columns names="optical_connector_b_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="splice_requires_fiber_a" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_splice">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_connection">
 	<columns names="fiber_end_a_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="splice_requires_fiber_b" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_splice">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.fiber_connection">
 	<columns names="fiber_end_b_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_splice_is_a_fiber_connection" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_connection" table="public.fiber_splice">
+	<columns names="fiber_connection_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1065,24 +1020,19 @@ optical_connector_connection.optical_connector_a_id
 	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="optical_splitter_inputs_are_a_fiber"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_connector_connection_optical_connector" type="relfk" layer="0"
-	 src-table="public.optical_connector_connection"
-	 dst-table="public.optical_connector" reference-fk="optical_connection_requires_connector_a"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_optical_connector_connection_optical_connector1" type="relfk" layer="0"
-	 src-table="public.optical_connector_connection"
-	 dst-table="public.optical_connector" reference-fk="optical_connection_requires_connector_b"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="&quot;rel_fiber_splice_fiber_end?&quot;" type="relfk" layer="0"
-	 src-table="public.fiber_splice"
+	 src-table="public.fiber_connection"
 	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="splice_requires_fiber_a"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="&quot;rel_fiber_splice_fiber_end?1&quot;" type="relfk" layer="0"
-	 src-table="public.fiber_splice"
+	 src-table="public.fiber_connection"
 	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="splice_requires_fiber_b"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_splice_fiber_connection" type="relfk" layer="0"
+	 src-table="public.fiber_splice"
+	 dst-table="public.fiber_connection" reference-fk="fiber_splice_is_a_fiber_connection"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
