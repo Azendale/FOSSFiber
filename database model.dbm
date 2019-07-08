@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution" last-position="874,75" last-zoom="0.8" max-obj-count="50"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution" last-position="874,75" last-zoom="0.8" max-obj-count="49"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply.]]></comment>
@@ -913,12 +913,6 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="index_level_refers_to_cable_structure_level" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_group" table="public.fiber_identifier_index">
-	<columns names="group_level" ref-type="src-columns"/>
-	<columns names="level" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="fiber_cable_can_have_many_slack_loops" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_cable" table="public.fiber_cable_slack_loop">
 	<columns names="fiber_cable_id" ref-type="src-columns"/>
@@ -1157,11 +1151,6 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 <relationship name="rel_optical_splitter_fiber_enclosure" type="relfk" layer="0"
 	 src-table="public.optical_splitter"
 	 dst-table="public.fiber_enclosure" reference-fk="splitter_can_be_located_inside_fiber_enclosure"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_identifier_index_fiber_group" type="relfk" layer="0"
-	 src-table="public.fiber_identifier_index"
-	 dst-table="public.fiber_group" reference-fk="index_level_refers_to_cable_structure_level"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_optical_connector_optical_connector_types" type="relfk" layer="0"
