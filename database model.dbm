@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,7" last-zoom="0.8" max-obj-count="49"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,0" last-zoom="0.8" max-obj-count="50"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -559,7 +559,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="fiber_end" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1160" y="140"/>
+	<position x="1060" y="140"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -795,6 +795,29 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 		<type name="integer" length="0"/>
 	</column>
 	<constraint name="fiber_enclosure_located_in_underground_vault_pk" type="pk-constr" table="public.fiber_enclosure_located_in_underground_vault">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_end_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Tracks specialization/inheritance of fiber_ends and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_end.id and {inheriting_table_name}.{inheriting_table_column) should return a result.]]></comment>
+	<position x="800" y="0"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inheriting_table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="inheriting_table_column" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="fiber_end_instance_inheritance_pk" type="pk-constr" table="public.fiber_end_instance_inheritance">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -1039,6 +1062,12 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fiber_end_inheritance_has_fiber_end_instance" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.fiber_end_instance_inheritance">
+	<columns names="fiber_end_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_pole_attachment_utility_pole" type="relfk" layer="0"
 	 src-table="public.pole_attachment"
 	 dst-table="public.utility_pole" reference-fk="pole_reference"
@@ -1241,6 +1270,11 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 <relationship name="rel_enclosure_port_fiber_end1" type="relfk" layer="0"
 	 src-table="public.enclosure_port"
 	 dst-table="public.fiber_end" reference-fk="enclosure_port_has_outside_fiber_end"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_end_instance_inheritance_fiber_end" type="relfk" layer="0"
+	 src-table="public.fiber_end_instance_inheritance"
+	 dst-table="public.fiber_end" reference-fk="fiber_end_inheritance_has_fiber_end_instance"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
