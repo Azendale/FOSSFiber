@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution" last-position="873,887" last-zoom="0.8" max-obj-count="49"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution" last-position="0,0" last-zoom="0.8" max-obj-count="49"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply.]]></comment>
@@ -184,7 +184,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="enclosure_port" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1200" y="340"/>
+	<position x="1240" y="380"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -192,14 +192,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="fiber_enclosure_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="inside_port_type_id">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="outside_port_type_id">
-		<type name="integer" length="0"/>
-	</column>
 	<column name="port_label">
 		<type name="text" length="0"/>
+	</column>
+	<column name="fiber_end_id_inside" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_id_outside" not-null="true">
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="enclosure_port_id_pk" type="pk-constr" table="public.enclosure_port">
 		<columns names="id" ref-type="src-columns"/>
@@ -859,15 +859,15 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="ref_inside_connector_type" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.enclosure_port">
-	<columns names="inside_port_type_id" ref-type="src-columns"/>
+<constraint name="enclosure_port_has_inside_fiber_end" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.enclosure_port">
+	<columns names="fiber_end_id_inside" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="ref_outside_connector_type" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.enclosure_port">
-	<columns names="outside_port_type_id" ref-type="src-columns"/>
+<constraint name="enclosure_port_has_outside_fiber_end" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.&quot;fiber_end?&quot;" table="public.enclosure_port">
+	<columns names="fiber_end_id_outside" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1074,16 +1074,6 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	 dst-table="public.fiber_enclosure" reference-fk="ref_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_enclosure_port_optical_connector_types" type="relfk" layer="0"
-	 src-table="public.enclosure_port"
-	 dst-table="public.optical_connector_types" reference-fk="ref_inside_connector_type"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_enclosure_port_optical_connector_types1" type="relfk" layer="0"
-	 src-table="public.enclosure_port"
-	 dst-table="public.optical_connector_types" reference-fk="ref_outside_connector_type"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_enclosure_cable_entry_fiber_enclosure" type="relfk" layer="0"
 	 src-table="public.enclosure_cable_entry"
 	 dst-table="public.fiber_enclosure" reference-fk="ref_fiber_enclosure_id"
@@ -1241,6 +1231,16 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 <relationship name="rel_fiber_enclosure_located_in_underground_vault_underground_va" type="relfk" layer="0"
 	 src-table="public.fiber_enclosure_located_in_underground_vault"
 	 dst-table="public.underground_vault" reference-fk="m2m_underground_vault_fiber_enclosure"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_enclosure_port_fiber_end?&quot;" type="relfk" layer="0"
+	 src-table="public.enclosure_port"
+	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="enclosure_port_has_inside_fiber_end"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="&quot;rel_enclosure_port_fiber_end?1&quot;" type="relfk" layer="0"
+	 src-table="public.enclosure_port"
+	 dst-table="public.&quot;fiber_end?&quot;" reference-fk="enclosure_port_has_outside_fiber_end"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
