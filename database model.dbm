@@ -181,10 +181,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="enclosure_port" layer="0" collapse-mode="1" max-obj-count="6">
+<table name="enclosure_port" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1240" y="380"/>
+	<comment><![CDATA[Inherited fiber_connection.fiber_end_a_id is considered the in side of the enclosure, inherited fiber_connection.fiber_end_b_id is considered the out side of the enclosure. This is by convention and not enforced by checks.]]></comment>
+	<position x="1160" y="360"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -195,14 +196,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="port_label">
 		<type name="text" length="0"/>
 	</column>
-	<column name="fiber_end_id_inside" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="fiber_end_id_outside" not-null="true">
+	<column name="fiber_connection_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<constraint name="enclosure_port_id_pk" type="pk-constr" table="public.enclosure_port">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="enclosure_port_uniquely_owns_inherited_fiber_connection" type="uq-constr" table="public.enclosure_port">
+		<columns names="fiber_connection_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -232,7 +233,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 •LC/UPC•M⸣
 •LC/UPC•F⸣
 •LC/APC•M⸣
-•LC/APC•F]]>
+•LC/APC•F⸣
+•900 fiber•M⸣
+•250 fiber•M⸣
+•fusion splice•F⸣
+•mechanical splice•F]]>
 	</initial-data>
 </table>
 
@@ -512,6 +517,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="optical_splitter_output_pk" type="pk-constr" table="public.optical_splitter_output">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="optical_splitter_output_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.optical_splitter_output">
+		<columns names="fiber_end_id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="optical_splitter_input" layer="0" collapse-mode="1" max-obj-count="6">
@@ -537,6 +545,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<constraint name="optical_splitter_input_pk" type="pk-constr" table="public.optical_splitter_input">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="optical_splitter_input_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.optical_splitter_input">
+		<columns names="fiber_end_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -598,6 +609,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="cable_fiber_end?_pk" type="pk-constr" table="public.cable_fiber_end">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="cable_fiber_end_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.cable_fiber_end">
+		<columns names="fiber_end_id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="utility_pole" layer="0" collapse-mode="1" max-obj-count="4">
@@ -625,7 +639,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="fiber_connection" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1500" y="20"/>
+	<position x="1540" y="20"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -690,6 +704,9 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	</column>
 	<constraint name="fiber_splice_pk" type="pk-constr" table="public.fiber_splice">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fiber_plice_uniquely_owns_inherited_fiber_connection" type="uq-constr" table="public.fiber_splice">
+		<columns names="fiber_connection_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -799,26 +816,41 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	</constraint>
 </table>
 
-<table name="fiber_end_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="4">
+<table name="fiber_end_meta_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[Tracks specialization/inheritance of fiber_ends and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_end.id and {inheriting_table_name}.{inheriting_table_column) should return a result.]]></comment>
+	<comment><![CDATA[Tracks specialization/inheritance of fiber_ends and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_end.id and {inheriting_table_name}.{inheriting_table_fk_column_name) should return a result.]]></comment>
 	<position x="800" y="0"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
-	</column>
 	<column name="fiber_end_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="inheriting_table_name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="inheriting_table_column" not-null="true">
+	<column name="inheriting_table_fk_column_name" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<constraint name="fiber_end_instance_inheritance_pk" type="pk-constr" table="public.fiber_end_instance_inheritance">
-		<columns names="id" ref-type="src-columns"/>
+	<constraint name="fiber_end_meta_instance_inheritance_pk" type="pk-constr" table="public.fiber_end_meta_instance_inheritance">
+		<columns names="fiber_end_id,inheriting_table_name,inheriting_table_fk_column_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_connection_meta_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Tracks specialization/inheritance of fiber_connections and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_connection.id and {inheriting_table_name}.{inheriting_table_fk_column_name) should return a result.]]></comment>
+	<position x="1500" y="460"/>
+	<column name="fiber_connection_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inheriting_table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="inheriting_table_fk_column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="fiber_connection_meta_instance_inheritance_pk" type="pk-constr" table="public.fiber_connection_meta_instance_inheritance">
+		<columns names="fiber_connection_id,inheriting_table_name,inheriting_table_fk_column_name" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -882,15 +914,9 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="enclosure_port_has_inside_fiber_end" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.enclosure_port">
-	<columns names="fiber_end_id_inside" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="enclosure_port_has_outside_fiber_end" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.enclosure_port">
-	<columns names="fiber_end_id_outside" ref-type="src-columns"/>
+<constraint name="enclosure_port_inherits_from_fiber_connection" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_connection" table="public.enclosure_port">
+	<columns names="fiber_connection_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1063,8 +1089,14 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 </constraint>
 
 <constraint name="fiber_end_inheritance_has_fiber_end_instance" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.fiber_end_instance_inheritance">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.fiber_end_meta_instance_inheritance">
 	<columns names="fiber_end_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_connection_can_be_inherited_by_many_tables" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_connection" table="public.fiber_connection_meta_instance_inheritance">
+	<columns names="fiber_connection_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1195,7 +1227,11 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 <relationship name="rel_optical_splitter_output_fiber_end" type="relfk" layer="0"
 	 src-table="public.optical_splitter_output"
 	 dst-table="public.fiber_end" reference-fk="optical_splitter_outputs_are_a_fiber"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="src-label">
+		<position x="-8.557" y="1.525"/>
+	</label>
+</relationship>
 
 <relationship name="rel_optical_splitter_input_fiber_end" type="relfk" layer="0"
 	 src-table="public.optical_splitter_input"
@@ -1262,19 +1298,23 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	 dst-table="public.underground_vault" reference-fk="m2m_underground_vault_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="&quot;rel_enclosure_port_fiber_end?&quot;" type="relfk" layer="0"
-	 src-table="public.enclosure_port"
-	 dst-table="public.fiber_end" reference-fk="enclosure_port_has_inside_fiber_end"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_enclosure_port_fiber_end1" type="relfk" layer="0"
-	 src-table="public.enclosure_port"
-	 dst-table="public.fiber_end" reference-fk="enclosure_port_has_outside_fiber_end"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_fiber_end_instance_inheritance_fiber_end" type="relfk" layer="0"
-	 src-table="public.fiber_end_instance_inheritance"
+	 src-table="public.fiber_end_meta_instance_inheritance"
 	 dst-table="public.fiber_end" reference-fk="fiber_end_inheritance_has_fiber_end_instance"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_fiber_connection" type="relfk" layer="0"
+	 src-table="public.enclosure_port"
+	 dst-table="public.fiber_connection" reference-fk="enclosure_port_inherits_from_fiber_connection"
+	 src-required="false" dst-required="false">
+	<label ref-type="src-label">
+		<position x="4.72425" y="0.125"/>
+	</label>
+</relationship>
+
+<relationship name="rel_fiber_connection_meta_instance_inheritance_fiber_connection" type="relfk" layer="0"
+	 src-table="public.fiber_connection_meta_instance_inheritance"
+	 dst-table="public.fiber_connection" reference-fk="fiber_connection_can_be_inherited_by_many_tables"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
