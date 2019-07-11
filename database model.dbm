@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="581,0" last-zoom="0.8" max-obj-count="49"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="581,0" last-zoom="0.8" max-obj-count="51"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -213,7 +213,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<position x="1820" y="580"/>
 	<column name="id" not-null="true"
 	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+		<type name="smallint" length="0"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="text" length="0"/>
@@ -234,8 +234,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 •LC/UPC•F⸣
 •LC/APC•M⸣
 •LC/APC•F⸣
-•900 fiber•M⸣
-•250 fiber•M⸣
 •fusion splice•F⸣
 •mechanical splice•F]]>
 	</initial-data>
@@ -616,7 +614,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_connection" layer="0" collapse-mode="1" max-obj-count="4">
+<table name="fiber_connection" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1540" y="20"/>
@@ -624,11 +622,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="fiber_end_a_id" not-null="true">
+	<column name="connected_fiber_end_a_id">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="fiber_end_b_id" not-null="true">
+	<column name="connected_fiber_end_b_id">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="a_optical_connector_type_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="b_optical_connector_type_id">
+		<type name="smallint" length="0"/>
 	</column>
 	<constraint name="fiber_end_cant_splice_to_itself" type="ck-constr" table="public.fiber_connection">
 			<expression><![CDATA[fiber_end_a_id <> fiber_end_b_id]]></expression>
@@ -819,7 +823,7 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Tracks specialization/inheritance of fiber_connections and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_connection.id and {inheriting_table_name}.{inheriting_table_fk_column_name) should return a result.]]></comment>
-	<position x="1540" y="120"/>
+	<position x="1540" y="140"/>
 	<column name="fiber_connection_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
@@ -990,15 +994,27 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="splice_requires_fiber_a" type="fk-constr" comparison-type="MATCH FULL"
+<constraint name="fiber_connection_may_connect_fiber_end_a" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.fiber_connection">
-	<columns names="fiber_end_a_id" ref-type="src-columns"/>
+	<columns names="connected_fiber_end_a_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="splice_requires_fiber_b" type="fk-constr" comparison-type="MATCH FULL"
+<constraint name="fiber_connection_may_connect_fiber_end_b" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_end" table="public.fiber_connection">
-	<columns names="fiber_end_b_id" ref-type="src-columns"/>
+	<columns names="connected_fiber_end_b_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_connection_a_may_have_optical_connector_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.fiber_connection">
+	<columns names="a_optical_connector_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_connection_b_may_have_optical_connector_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.fiber_connection">
+	<columns names="b_optical_connector_type_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1178,7 +1194,7 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	 dst-table="public.fiber_enclosure" reference-fk="splitter_can_be_located_inside_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="&quot;rel_cable_fiber_end?_fiber&quot;" type="relfk" layer="0"
+<relationship name="rel_cable_fiber_end_fiber" type="relfk" layer="0"
 	 src-table="public.cable_fiber_end"
 	 dst-table="public.fiber" reference-fk="cable_fiber_end_is_attritube_of_cable_fiber"
 	 src-required="false" dst-required="false"/>
@@ -1202,14 +1218,14 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 	 dst-table="public.fiber_end" reference-fk="optical_splitter_inputs_are_a_fiber"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="&quot;rel_fiber_splice_fiber_end?&quot;" type="relfk" layer="0"
+<relationship name="rel_fiber_splice_fiber_end" type="relfk" layer="0"
 	 src-table="public.fiber_connection"
-	 dst-table="public.fiber_end" reference-fk="splice_requires_fiber_a"
+	 dst-table="public.fiber_end" reference-fk="fiber_connection_may_connect_fiber_end_a"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_splice_fiber_end1" type="relfk" layer="0"
 	 src-table="public.fiber_connection"
-	 dst-table="public.fiber_end" reference-fk="splice_requires_fiber_b"
+	 dst-table="public.fiber_end" reference-fk="fiber_connection_may_connect_fiber_end_b"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_splice_fiber_connection" type="relfk" layer="0"
@@ -1284,6 +1300,16 @@ select fiber_connection.id, fiber_connection.fiber_end_b_id, fiber_connection.fi
 <relationship name="rel_fiber_end_optical_connector_types" type="relfk" layer="0"
 	 src-table="public.fiber_end"
 	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.fiber_connection"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_optical_connector_types1" type="relfk" layer="0"
+	 src-table="public.fiber_connection"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
