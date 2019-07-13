@@ -426,16 +426,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="fiber_cable_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="units_of_slack">
+	<column name="in_meterage">
 		<type name="real" length="0"/>
-		<comment><![CDATA[amount of slack in the loop. Units of measure are whatever the fiber_cable.length_units references.]]></comment>
-	</column>
-	<column name="slack_loop_position_along_cable">
-		<type name="real" length="0"/>
-		<comment><![CDATA[footage or meterage (decided by the fiber_cable.length_units on the related fiber_cable) of where the slack loop is along the cable. Where the slack loop "starts" when going down the cable in ascending measurement numbers.]]></comment>
+		<comment><![CDATA[length in meters of where the slack coil is along the cable. Where the slack loop "starts" when going down the cable in ascending measurement numbers.]]></comment>
 	</column>
 	<column name="latlong">
 		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<column name="out_meterage">
+		<type name="real" length="0"/>
 	</column>
 	<constraint name="fiber_cable_slack_coil_pk" type="pk-constr" table="public.fiber_cable_slack_coil">
 		<columns names="id" ref-type="src-columns"/>
