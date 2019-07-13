@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,924" last-zoom="0.8" max-obj-count="55"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,966" last-zoom="0.8" max-obj-count="63"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -18,22 +18,22 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="pole_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="600" y="1360"/>
+	<position x="800" y="1360"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
-	</column>
-	<column name="height_feet">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="height_inches">
-		<type name="smallint" length="0"/>
 	</column>
 	<column name="height_meters">
 		<type name="real" length="0"/>
 	</column>
 	<column name="attached_pole" not-null="true">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="permitting_requested" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="permitting_granted" not-null="true" default-value="false">
+		<type name="bool" length="0"/>
 	</column>
 	<constraint name="pole_attachement_id_pk" type="pk-constr" table="public.pole_attachment">
 		<columns names="id" ref-type="src-columns"/>
@@ -43,7 +43,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="strand_line" layer="0" collapse-mode="1" max-obj-count="1">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="640" y="1600"/>
+	<position x="0" y="1420"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -53,56 +53,53 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_attachment" layer="0" collapse-mode="1" max-obj-count="7">
+<table name="strand_attachment" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="60" y="1280"/>
+	<position x="200" y="1340"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="attachment_type" not-null="true">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="pole_attachment_id">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="strand_attachment_id">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="strand_line_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="attachment squence">
+	<column name="strand_line_squence">
 		<type name="real" length="0"/>
 		<comment><![CDATA[Used to sort attachments into their order that they occur along the strand]]></comment>
 	</column>
-	<constraint name="inheritance_option_attachment_type_check" type="ck-constr" table="public.strand_attachment">
-			<expression><![CDATA[(attachment_type = 1 and pole_attachment_id is not NULL and strand_attachment_id is NULL) OR (attachment_type = 2 and pole_attachment_id is NULL and strand_attachment_id is not NULL)]]></expression>
-		<comment><![CDATA[Make sure this pure virtual base class ends up being one of two child classes]]></comment>
-	</constraint>
 	<constraint name="strand_attachment_id_pk" type="pk-constr" table="public.strand_attachment">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="strand_to_strand_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="strand_to_strand_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Should we denormalize and cache a point of where this strand attachment ends up being on the parent strand?]]></comment>
-	<position x="700" y="1760"/>
+	<position x="220" y="1680"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="attached_to_strand" not-null="true">
+	<column name="percentage_along_segment" not-null="true">
+		<type name="real" length="0"/>
+		<comment><![CDATA[Value between 0 and 1. Percentage along segment from strand_attachment_a_id to strand_attachment_b_id]]></comment>
+	</column>
+	<column name="segment_strand_attachment_a_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="distance_along_attached_to_strand" not-null="true">
-		<type name="real" length="0"/>
+	<column name="segment_strand_attachment_b_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="strand_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="strand_to_strand_attachment_id_pk" type="pk-constr" table="public.strand_to_strand_attachment">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="percentage_along_segment_must_be_between_0_and_1" type="ck-constr" table="public.strand_to_strand_attachment">
+			<expression><![CDATA[percentage_along_segment >= 0 and percentage_along_segment <= 1]]></expression>
 	</constraint>
 </table>
 
@@ -114,7 +111,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="standoff_pipe" default-value="false">
+	<column name="sidewalk_standoff_pipe" default-value="false">
 		<type name="bool" length="0"/>
 	</column>
 	<column name="pole_attachment_id" not-null="true">
@@ -886,15 +883,105 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
+<table name="strand_pole_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="640" y="1680"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="pole_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="strand_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="strand_pole_attachment_pk" type="pk-constr" table="public.strand_pole_attachment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="pole_attachment_meta_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="800" y="1500"/>
+	<column name="pole_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inheriting_table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="inheriting_table_fk_column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pole_attechment_meta_instance_inheritance_pk" type="pk-constr" table="public.pole_attachment_meta_instance_inheritance">
+		<columns names="pole_attachment_id,inheriting_table_name,inheriting_table_fk_column_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="strand_attachment_meta_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="200" y="1440"/>
+	<column name="strand_attachment_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inheriting_table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="inheriting_table_fk_column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="strand_attachment_meta_object_inheritance_pk" type="pk-constr" table="public.strand_attachment_meta_instance_inheritance">
+		<columns names="strand_attachment_id,inheriting_table_name,inheriting_table_fk_column_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<view name="v_strand_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Union of all instances of classes decended from strand_attachment, giving a uniform way to access the interface "strand_attachment" field regardless of how the inheriting classes implement it. TODO: expose point location of attachment.]]></comment>
+	<position x="200" y="1260"/>
+	<reference>
+		<expression><![CDATA[(select 
+strand_attachment_id,
+strand_line_id,
+strand_attachment.strand_line_squence
+from strand_to_strand_attachment
+inner join strand_attachment on strand_to_strand_attachment.strand_attachment_id = strand_attachment.id
+)
+union all 
+(select 
+strand_attachment_id,
+strand_line_id,
+strand_attachment.strand_line_squence
+from strand_pole_attachment
+inner join strand_attachment on strand_pole_attachment.strand_attachment_id = strand_attachment.id)]]></expression>
+		<reftable name="public.strand_attachment"/>
+		<reftable name="public.strand_to_strand_attachment"/>
+		<reftable name="public.strand_pole_attachment"/>
+	</reference>
+</view>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_attachment" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_to_strand__4572" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_to_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_pole_att_4574" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
 	<columns names="attached_pole" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="ref_pole_attachment" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.strand_attachment">
-	<columns names="pole_attachment_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -904,15 +991,21 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="ref_strand_to_strand" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_to_strand_attachment" table="public.strand_attachment">
+<constraint name="strand_to_strand_attachment_is_strand_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_to_strand_attachment">
 	<columns names="strand_attachment_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="ref_attached_to_strandline" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_line" table="public.strand_to_strand_attachment">
-	<columns names="attached_to_strand" ref-type="src-columns"/>
+<constraint name="strand_segment_has_end_a_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_to_strand_attachment">
+	<columns names="segment_strand_attachment_a_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="strand_segment_has_end_b_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_to_strand_attachment">
+	<columns names="segment_strand_attachment_b_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1156,29 +1249,38 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="strand_pole_attachment_is_pole_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.strand_pole_attachment">
+	<columns names="pole_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="strand_pole_attachment_is_strand_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_pole_attachment">
+	<columns names="strand_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="pole_attachment_inheritance_requires_pole_attachment_id" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.pole_attachment_meta_instance_inheritance">
+	<columns names="pole_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="strand_attachment_instance_inheritance_has_strand_attachment_id" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_attachment_meta_instance_inheritance">
+	<columns names="strand_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_pole_attachment_utility_pole" type="relfk" layer="0"
 	 src-table="public.pole_attachment"
 	 dst-table="public.utility_pole" reference-fk="pole_reference"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_strand_attachment_pole_attachment" type="relfk" layer="0"
-	 src-table="public.strand_attachment"
-	 dst-table="public.pole_attachment" reference-fk="ref_pole_attachment"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_strand_attachment_strand_line" type="relfk" layer="0"
 	 src-table="public.strand_attachment"
 	 dst-table="public.strand_line" reference-fk="ref_strand_line"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_strand_to_strand_attachment_strand_line" type="relfk" layer="0"
-	 src-table="public.strand_to_strand_attachment"
-	 dst-table="public.strand_line" reference-fk="ref_attached_to_strandline"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_strand_attachment_strand_to_strand_attachment" type="relfk" layer="0"
-	 src-table="public.strand_attachment"
-	 dst-table="public.strand_to_strand_attachment" reference-fk="ref_strand_to_strand"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_strand_guy_wire_pole_attachment" type="relfk" layer="0"
@@ -1391,6 +1493,41 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <relationship name="rel_fiber_cable_strand_attachment_fiber_cable" type="relfk" layer="0"
 	 src-table="public.fiber_cable_strand_attachment"
 	 dst-table="public.fiber_cable" reference-fk="fiber_cable_strand_attachment_requires_fiber_cable"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_pole_attachment_pole_attachment" type="relfk" layer="0"
+	 src-table="public.strand_pole_attachment"
+	 dst-table="public.pole_attachment" reference-fk="strand_pole_attachment_is_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_pole_attachment_meta_instance_inheritance_pole_attachment" type="relfk" layer="0"
+	 src-table="public.pole_attachment_meta_instance_inheritance"
+	 dst-table="public.pole_attachment" reference-fk="pole_attachment_inheritance_requires_pole_attachment_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_pole_attachment_strand_attachment" type="relfk" layer="0"
+	 src-table="public.strand_pole_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_pole_attachment_is_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_to_strand_attachment_strand_attachment" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_to_strand_attachment_is_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_to_strand_attachment_strand_attachment1" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_a_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_to_strand_attachment_strand_attachment2" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_b_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_attachment_meta_instance_inheritance_strand_attachme" type="relfk" layer="0"
+	 src-table="public.strand_attachment_meta_instance_inheritance"
+	 dst-table="public.strand_attachment" reference-fk="strand_attachment_instance_inheritance_has_strand_attachment_id"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
