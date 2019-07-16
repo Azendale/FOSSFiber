@@ -10,23 +10,38 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-# Private settings that shouldn't be in source control
-from . import privatesettings
-
 import os
+import json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+with open(os.path.join(BASE_DIR, 'non_vcs_settings.json')) as non_vcs_settings_file:
+    non_vcs_settings = json.load(non_vcs_settings_file)
+
+def get_non_vcs_setting(setting, non_vcs_settings=non_vcs_settings):
+    """Get non VCS setting or fail with ImproperlyConfigured"""
+    try:
+        return non_vcs_settings[setting]
+    except KeyError:
+        raise ImproperlyConfigured("Set the {} setting".format(setting))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_non_vcs_setting('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', '::1']
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = get_non_vcs_setting('SECRET_KEY')
 
+# Database
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+DATABASES = get_non_vcs_setting('DATABASES')
+
+ALLOWED_HOSTS = get_non_vcs_setting('ALLOWED_HOSTS')
 
 # Application definition
 
@@ -71,9 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'FOSSfiberweb.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 
 # Password validation
