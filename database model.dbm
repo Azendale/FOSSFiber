@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,1009" last-zoom="0.8" max-obj-count="79"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,1009" last-zoom="0.8" max-obj-count="98"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -239,7 +239,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="fiber_cable" layer="0" collapse-mode="1" max-obj-count="9">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[Need to figure out how to record and represent fiber cable structure. (Ribbon, loose tube, fiber count, etc. Armored, dielectric, gel?]]></comment>
 	<position x="1220" y="1020"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
@@ -695,22 +694,13 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="underground_conduit" layer="0" collapse-mode="1" max-obj-count="9">
+<table name="underground_conduit" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="560" y="1560"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
-	</column>
-	<column name="diameter">
-		<type name="real" length="0"/>
-	</column>
-	<column name="diameter_units">
-		<type name="smallint" length="0"/>
-	</column>
-	<column name="length_units">
-		<type name="smallint" length="0"/>
 	</column>
 	<column name="length">
 		<type name="real" length="0"/>
@@ -723,6 +713,9 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<column name="conduit_route">
 		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+	</column>
+	<column name="conduit_type_id" not-null="true">
+		<type name="integer" length="0"/>
 	</column>
 	<constraint name="underground_conduit_pk" type="pk-constr" table="public.underground_conduit">
 		<columns names="id" ref-type="src-columns"/>
@@ -1182,6 +1175,299 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	</constraint>
 </table>
 
+<table name="fiber_enclosure_template" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Template with predefined values for fiber_enclosures and related tables.]]></comment>
+	<position x="1651" y="1573"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="manufacturer_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="enclosure_model">
+		<type name="text" length="0"/>
+	</column>
+	<column name="template_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="fiber_enclosure_template_id" type="pk-constr" table="public.fiber_enclosure_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="enclosure_port_template" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Inherited fiber_connection.fiber_end_a_id is considered the in side of the enclosure, inherited fiber_connection.fiber_end_b_id is considered the out side of the enclosure. This is by convention and not enforced by checks.]]></comment>
+	<position x="1652" y="1755"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_enclosure_template_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="port_label">
+		<type name="text" length="0"/>
+	</column>
+	<column name="fiber_connection_template_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="enclosure_port_template_id_pk" type="pk-constr" table="public.enclosure_port_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="enclosure_port_uniquely_owns_inherited_fiber_connection_templat" type="uq-constr" table="public.enclosure_port_template">
+		<columns names="fiber_connection_template_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_connection_enclosure_port_template" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1649" y="1944"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="a_optical_connector_type_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="b_optical_connector_type_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="fiber_connection_enclosure_port_template_pk" type="pk-constr" table="public.fiber_connection_enclosure_port_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_cable_template" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Template with predefined values for fiber_cables and related tables.
+]]></comment>
+	<position x="1743" y="719"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="length_units" default-value="1">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="fiber_groups_depth" default-value="1">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="f_armored" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="f_outdoor" default-value="true">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="fiber_groups_top_level_count" default-value="1">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[Number/count of the fiber groups at the top level of the cable. For example, on a 48 count loose tube cable, this would be 4 for 4 buffer tubes. This is the same idea as the "subgroup_count" column in fiber_groups table, but it tells how many for the top level, since each level below the top would be stored in the "parent" fiber_group row.]]></comment>
+	</column>
+	<column name="template_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="fiber_cable_template_id_pk" type="pk-constr" table="public.fiber_cable_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fiber_group_template" layer="0" collapse-mode="1" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Describes the structure/fiber groupings in a cable. A massive cable with ]]></comment>
+	<position x="1757" y="495"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="subgroup_count" default-value="12">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[Number of subgroups or fibers in each of the groups this row represents. For example, 12 for 12 fibers in a buffer tube. Or, in a 96 count ribbon cable with a central tube, with this row being for the central tube, 8 for the 8 ribbons inside the central tube.]]></comment>
+	</column>
+	<column name="group_type_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="level" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="fiber_cable_template_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="fiber_group_template_pk" type="pk-constr" table="public.fiber_group_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_splitter_template" layer="0" collapse-mode="1" max-obj-count="7">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Template with predefined values for optical_splitters and related tables.]]></comment>
+	<position x="3150" y="1806.67"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="inputs_count" not-null="true" default-value="1">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="outputs_count">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="splitter_type_id" default-value="1">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="splitter_style_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="template_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="optical_splitter_template_id_pk" type="pk-constr" table="public.optical_splitter_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_splitter_output_template" layer="0" collapse-mode="1" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3461.67" y="1673.33"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="power_drop" default-value="NULL">
+		<type name="real" length="0"/>
+		<comment><![CDATA[NULL for theoretically symmetric output (calulate drop from the related  optical_splitter.outputs_count). Used for uneven input/output splits. Note that this is the theoretical drop that you would get modeling (for multi in x multi out splitters) the splitter as 2 back to back single input splitters with inputs tied together).]]></comment>
+	</column>
+	<column name="output_label">
+		<type name="text" length="0"/>
+	</column>
+	<column name="optical_splitter_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="optical_splitter_output_template_pk" type="pk-constr" table="public.optical_splitter_output_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="optical_splitter_output_tplt_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.optical_splitter_output_template">
+		<columns names="fiber_end_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_splitter_input_template" layer="0" collapse-mode="1" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3465" y="1848.33"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="power_drop" default-value="NULL">
+		<type name="real" length="0"/>
+		<comment><![CDATA[NULL for theoretically symmetric input (calulate drop from the related  optical_splitter.inputs_count). Used for uneven input/output splits. Note that this is the theoretical drop that you would get modeling (for multi in x multi out splitters) the splitter as 2 back to back single input splitters with inputs tied together).]]></comment>
+	</column>
+	<column name="input_label">
+		<type name="text" length="0"/>
+	</column>
+	<column name="optical_splitter_template_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="fiber_end_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="optical_splitter_input_template_pk" type="pk-constr" table="public.optical_splitter_input_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="optical_splitter_input_tplt_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.optical_splitter_input_template">
+		<columns names="fiber_end_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="optical_splitter_template_fiber_end" layer="0" collapse-mode="1" max-obj-count="2">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3895" y="1793.33"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="optical_connector_type_id">
+		<type name="smallint" length="0"/>
+		<comment><![CDATA[If the end of this fiber does not have factory installed connector, this column is NULL.]]></comment>
+	</column>
+	<constraint name="optical_splitter_template_fiber_end_pk" type="pk-constr" table="public.optical_splitter_template_fiber_end">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="underground_vault_template" layer="0" collapse-mode="1" max-obj-count="9">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Template with predefined values for underground_vaults and related tables.]]></comment>
+	<position x="46.6667" y="1945"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="depth">
+		<type name="real" length="0"/>
+	</column>
+	<column name="width">
+		<type name="real" length="0"/>
+	</column>
+	<column name="length">
+		<type name="real" length="0"/>
+	</column>
+	<column name="length_units_id">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="manufacturer_name">
+		<type name="text" length="0"/>
+	</column>
+	<column name="vault_model">
+		<type name="text" length="0"/>
+	</column>
+	<column name="template_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="underground_vault_template_pk" type="pk-constr" table="public.underground_vault_template">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="conduit_type" layer="0" collapse-mode="1" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="113.333" y="1616.67"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="diameter">
+		<type name="real" length="0"/>
+	</column>
+	<column name="diameter_units">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="length_units">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="conduit_type_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="conduit_type_pk" type="pk-constr" table="public.conduit_type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
 	<columns names="attached_pole" ref-type="src-columns"/>
@@ -1362,18 +1648,6 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="length_has_unit" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.underground_conduit">
-	<columns names="length_units" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="diameter_has_unit" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.underground_conduit">
-	<columns names="diameter_units" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="underground_conduit_may_start_at_underground_vault" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.underground_vault" table="public.underground_conduit">
 	<columns names="start_underground_vault_entry_id" ref-type="src-columns"/>
@@ -1383,6 +1657,12 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <constraint name="underground_conduit_may_end_at_underground_vault" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.underground_vault" table="public.underground_conduit">
 	<columns names="end_underground_vault_entry_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="underground_conduit_has_a_conduit_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.conduit_type" table="public.underground_conduit">
+	<columns names="conduit_type_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1536,6 +1816,108 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="ref_fiber_enclosure" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_enclosure_template" table="public.enclosure_port_template">
+	<columns names="fiber_enclosure_template_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="enclosure_port_inherits_from_fiber_connection" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_connection_enclosure_port_template" table="public.enclosure_port_template">
+	<columns names="fiber_connection_template_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_connection_a_may_have_optical_connector_type_cp" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.fiber_connection_enclosure_port_template">
+	<columns names="a_optical_connector_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_connection_b_may_have_optical_connector_type_cp" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.fiber_connection_enclosure_port_template">
+	<columns names="b_optical_connector_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_cable_template_has_one_length_unit" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.fiber_cable_template">
+	<columns names="length_units" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_group_template_has_one_fiber_group_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_group_types" table="public.fiber_group_template">
+	<columns names="group_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_group_template_belongs_to_fiber_cable_template" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_cable_template" table="public.fiber_group_template">
+	<columns names="fiber_cable_template_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitters_are_one_of_standard_types" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_types" table="public.optical_splitter_template">
+	<columns names="splitter_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitters_templates_are_one_of_a_standard_style" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_styles" table="public.optical_splitter_template">
+	<columns names="splitter_style_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitter_outputs_templates_belong_to_a_splitter_templat" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_template" table="public.optical_splitter_output_template">
+	<columns names="optical_splitter_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitter_outputs_are_a_fiber" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_template_fiber_end" table="public.optical_splitter_output_template">
+	<columns names="fiber_end_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitter_inputs_templates_belong_to_a_splitter_template" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_template" table="public.optical_splitter_input_template">
+	<columns names="optical_splitter_template_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="optical_splitter_inputs_are_a_fiber" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_splitter_template_fiber_end" table="public.optical_splitter_input_template">
+	<columns names="fiber_end_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fiber_end_can_have_optical_connector_type" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.optical_connector_types" table="public.optical_splitter_template_fiber_end">
+	<columns names="optical_connector_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="demensions_measurements_must_have_unit" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.underground_vault_template">
+	<columns names="length_units_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="length_has_unit" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.conduit_type">
+	<columns names="length_units" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="diameter_has_unit" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.length_units" table="public.conduit_type">
+	<columns names="diameter_units" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_pole_attachment_utility_pole" type="relfk" layer="0"
 	 src-table="public.pole_attachment"
 	 dst-table="public.utility_pole" reference-fk="pole_reference"
@@ -1649,16 +2031,6 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <relationship name="rel_underground_vault_length_units" type="relfk" layer="0"
 	 src-table="public.underground_vault"
 	 dst-table="public.length_units" reference-fk="demensions_measurements_must_have_unit"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_underground_conduit_length_units" type="relfk" layer="0"
-	 src-table="public.underground_conduit"
-	 dst-table="public.length_units" reference-fk="length_has_unit"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_underground_conduit_length_units1" type="relfk" layer="0"
-	 src-table="public.underground_conduit"
-	 dst-table="public.length_units" reference-fk="diameter_has_unit"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_underground_conduit_underground_vault" type="relfk" layer="0"
@@ -1829,6 +2201,96 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <relationship name="rel_strand_building_attachment_building_attachment" type="relfk" layer="0"
 	 src-table="public.strand_building_attachment"
 	 dst-table="public.building_attachment" reference-fk="strand_building_attachment_has_building_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_template_fiber_enclosure_template" type="relfk" layer="0"
+	 src-table="public.enclosure_port_template"
+	 dst-table="public.fiber_enclosure_template" reference-fk="ref_fiber_enclosure"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_cp_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.fiber_connection_enclosure_port_template"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type_cp"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_cp_optical_connector_types1" type="relfk" layer="0"
+	 src-table="public.fiber_connection_enclosure_port_template"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type_cp"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_enclosure_port_template_fiber_connection_enclosure_port_tem" type="relfk" layer="0"
+	 src-table="public.enclosure_port_template"
+	 dst-table="public.fiber_connection_enclosure_port_template" reference-fk="enclosure_port_inherits_from_fiber_connection"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_cable_cp_length_units" type="relfk" layer="0"
+	 src-table="public.fiber_cable_template"
+	 dst-table="public.length_units" reference-fk="fiber_cable_template_has_one_length_unit"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_group_cp_fiber_group_types" type="relfk" layer="0"
+	 src-table="public.fiber_group_template"
+	 dst-table="public.fiber_group_types" reference-fk="fiber_group_template_has_one_fiber_group_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_group_template_fiber_cable_template" type="relfk" layer="0"
+	 src-table="public.fiber_group_template"
+	 dst-table="public.fiber_cable_template" reference-fk="fiber_group_template_belongs_to_fiber_cable_template"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_cp_optical_splitter_types" type="relfk" layer="0"
+	 src-table="public.optical_splitter_template"
+	 dst-table="public.optical_splitter_types" reference-fk="optical_splitters_are_one_of_standard_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_cp_optical_splitter_styles" type="relfk" layer="0"
+	 src-table="public.optical_splitter_template"
+	 dst-table="public.optical_splitter_styles" reference-fk="optical_splitters_templates_are_one_of_a_standard_style"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_output_template_optical_splitter_template" type="relfk" layer="0"
+	 src-table="public.optical_splitter_output_template"
+	 dst-table="public.optical_splitter_template" reference-fk="optical_splitter_outputs_templates_belong_to_a_splitter_templat"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_input_template_optical_splitter_template" type="relfk" layer="0"
+	 src-table="public.optical_splitter_input_template"
+	 dst-table="public.optical_splitter_template" reference-fk="optical_splitter_inputs_templates_belong_to_a_splitter_template"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_end_cp_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.optical_splitter_template_fiber_end"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_output_template_optical_splitter_template_" type="relfk" layer="0"
+	 src-table="public.optical_splitter_output_template"
+	 dst-table="public.optical_splitter_template_fiber_end" reference-fk="optical_splitter_outputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_input_template_optical_splitter_template_f" type="relfk" layer="0"
+	 src-table="public.optical_splitter_input_template"
+	 dst-table="public.optical_splitter_template_fiber_end" reference-fk="optical_splitter_inputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_underground_vault_cp_length_units" type="relfk" layer="0"
+	 src-table="public.underground_vault_template"
+	 dst-table="public.length_units" reference-fk="demensions_measurements_must_have_unit"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_underground_conduit_cp_length_units" type="relfk" layer="0"
+	 src-table="public.conduit_type"
+	 dst-table="public.length_units" reference-fk="length_has_unit"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_underground_conduit_cp_length_units1" type="relfk" layer="0"
+	 src-table="public.conduit_type"
+	 dst-table="public.length_units" reference-fk="diameter_has_unit"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_underground_conduit_underground_conduit_type" type="relfk" layer="0"
+	 src-table="public.underground_conduit"
+	 dst-table="public.conduit_type" reference-fk="underground_conduit_has_a_conduit_type"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
