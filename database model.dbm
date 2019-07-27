@@ -15,7 +15,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <extension name="postgis">
 </extension>
 
-<table name="pole_attachment" layer="0" collapse-mode="1" max-obj-count="6">
+<table name="pole_attachment" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="500" y="300"/>
@@ -29,10 +29,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="attached_pole" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="permitting_requested" default-value="false">
+	<column name="f_permitting_requested" default-value="false">
 		<type name="bool" length="0"/>
 	</column>
-	<column name="permitting_granted" not-null="true" default-value="false">
+	<column name="f_permitting_granted" not-null="true" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="f_built" default-value="True">
 		<type name="bool" length="0"/>
 	</column>
 	<constraint name="pole_attachement_id_pk" type="pk-constr" table="public.pole_attachment">
@@ -232,7 +235,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 •LC/APC•M⸣
 •LC/APC•F⸣
 •fusion splice•F⸣
-•mechanical splice•F]]>
+•mechanical splice•F⸣
+•OptiTap SC/APC Port•F⸣
+•OptiTap SC/APC Plug•M]]>
 	</initial-data>
 </table>
 
@@ -304,7 +309,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="shortname" default-value="'buffer tube'">
-		<type name="varchar" length="15"/>
+		<type name="text" length="15"/>
 	</column>
 	<constraint name="fiber_group_types_pk" type="pk-constr" table="public.fiber_group_types">
 		<columns names="id" ref-type="src-columns"/>
@@ -891,7 +896,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="pole_attachment_meta_instance_inheritance" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="500" y="440"/>
+	<position x="499" y="456"/>
 	<column name="pole_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
@@ -1181,7 +1186,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<comment><![CDATA[Template with predefined values for fiber_enclosures and related tables.]]></comment>
 	<position x="1651" y="1573"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="manufacturer_name">
@@ -1196,6 +1201,10 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<constraint name="fiber_enclosure_template_id" type="pk-constr" table="public.fiber_enclosure_template">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•manufacturer_name•enclosure_model•template_name⸣
+1•Commscope•OTE-300•OTE-300]]>
+	</initial-data>
 </table>
 
 <table name="enclosure_port_template" layer="0" collapse-mode="1" max-obj-count="4">
@@ -1204,7 +1213,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<comment><![CDATA[Inherited fiber_connection.fiber_end_a_id is considered the in side of the enclosure, inherited fiber_connection.fiber_end_b_id is considered the out side of the enclosure. This is by convention and not enforced by checks.]]></comment>
 	<position x="1652" y="1755"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="fiber_enclosure_template_id" not-null="true">
@@ -1222,6 +1231,21 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<constraint name="enclosure_port_uniquely_owns_inherited_fiber_connection_templat" type="uq-constr" table="public.enclosure_port_template">
 		<columns names="fiber_connection_template_id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•fiber_enclosure_template_id•port_label•fiber_connection_template_id⸣
+1•1••1⸣
+2•1••2⸣
+3•1••3⸣
+4•1••4⸣
+5•1••5⸣
+6•1••6⸣
+7•1••7⸣
+8•1••8⸣
+9•1••9⸣
+10•1••10⸣
+11•1••11⸣
+12•1••12]]>
+	</initial-data>
 </table>
 
 <table name="fiber_connection_enclosure_port_template" layer="0" collapse-mode="1" max-obj-count="3">
@@ -1229,7 +1253,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<role name="postgres"/>
 	<position x="1649" y="1944"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="a_optical_connector_type_id">
@@ -1241,6 +1265,21 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<constraint name="fiber_connection_enclosure_port_template_pk" type="pk-constr" table="public.fiber_connection_enclosure_port_template">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•a_optical_connector_type_id•b_optical_connector_type_id⸣
+1•11•⸣
+2•11•⸣
+3•11•⸣
+4•11•⸣
+5•11•⸣
+6•11•⸣
+7•11•⸣
+8•11•⸣
+9•11•⸣
+10•11•⸣
+11•11•⸣
+12•11•]]>
+	</initial-data>
 </table>
 
 <table name="fiber_cable_template" layer="0" collapse-mode="1" max-obj-count="8">
@@ -1250,7 +1289,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 ]]></comment>
 	<position x="1743" y="719"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="length_units" default-value="1">
@@ -1283,7 +1322,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<comment><![CDATA[Describes the structure/fiber groupings in a cable. A massive cable with ]]></comment>
 	<position x="1757" y="495"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="subgroup_count" default-value="12">
@@ -1414,7 +1453,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<comment><![CDATA[Template with predefined values for underground_vaults and related tables.]]></comment>
 	<position x="46.6667" y="1945"/>
 	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
+	 identity-type="BY DEFAULT">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="depth">
@@ -1467,6 +1506,321 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
+
+<table name="history_text" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1710" y="7"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="text" length="0"/>
+	</column>
+	<column name="after_value">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="history_text_pk" type="pk-constr" table="public.history_text">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_text_idx_table_column_date" table="public.history_text"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_integer" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1711" y="181"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="after_value">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="history_integer_pk" type="pk-constr" table="public.history_integer">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_integer_idx_table_column_date" table="public.history_integer"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_real" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1951" y="8"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="real" length="0"/>
+	</column>
+	<column name="after_value">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="history_real_pk" type="pk-constr" table="public.history_real">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_real_idx_table_column_date" table="public.history_real"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_smallint" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1952" y="182"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="after_value">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="history_smallint_pk" type="pk-constr" table="public.history_smallint">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_smallint_idx_table_column_date" table="public.history_smallint"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_bool" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2489" y="8"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="after_value">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="history_bool_pk" type="pk-constr" table="public.history_bool">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_bool_idx_table_column_date" table="public.history_bool"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_geography_point" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2182" y="8"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<column name="after_value">
+		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="history_geography_point_pk" type="pk-constr" table="public.history_geography_point">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_geography_point_idx_table_column_date" table="public.history_geography_point"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_geography_linestring" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2181" y="183"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+	</column>
+	<column name="after_value">
+		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+	</column>
+	<constraint name="history_geography_linestring_pk" type="pk-constr" table="public.history_geography_linestring">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_geography_linestring_idx_table_column_date" table="public.history_geography_linestring"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="change_date"/>
+		</idxelement>
+</index>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
