@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,1009" last-zoom="0.8" max-obj-count="98"
+<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,1009" last-zoom="0.8" max-obj-count="106"
 	 default-schema="public" default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -1510,7 +1510,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_text" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1710" y="7"/>
+	<position x="1712" y="5"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1524,7 +1524,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1555,7 +1555,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_integer" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1711" y="181"/>
+	<position x="1713" y="179"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1569,7 +1569,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1600,7 +1600,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_real" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1951" y="8"/>
+	<position x="1953" y="6"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1614,7 +1614,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1645,7 +1645,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_smallint" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1952" y="182"/>
+	<position x="1954" y="180"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1659,7 +1659,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1690,7 +1690,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_bool" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2489" y="8"/>
+	<position x="2491" y="6"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1704,7 +1704,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1735,7 +1735,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_geography_point" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2182" y="8"/>
+	<position x="2184" y="6"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1749,7 +1749,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1780,7 +1780,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <table name="history_geography_linestring" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2181" y="183"/>
+	<position x="2183" y="181"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1794,7 +1794,7 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<column name="change_date" not-null="true" default-value="NOW()">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="username" not-null="true">
+	<column name="username">
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
@@ -1819,6 +1819,343 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 		</idxelement>
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
 			<column name="change_date"/>
+		</idxelement>
+</index>
+
+<table name="history_row_creation" layer="0" collapse-mode="2" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2721" y="10"/>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="table_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="creation" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+</table>
+
+<table name="history_row_deletion" layer="0" collapse-mode="2" max-obj-count="6">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3282" y="213"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="table_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="deletion" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="history_row_deletion_pk" type="pk-constr" table="public.history_row_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="history_text_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3572" y="0"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="history_text_deletion_pk" type="pk-constr" table="public.history_text_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_text_deletion_idx_table_column" table="public.history_text_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_integer_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2899" y="277"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="history_integer_deletion_pk" type="pk-constr" table="public.history_integer_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_integer_deletion_idx_table_column" table="public.history_integer_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_real_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2945" y="58"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="real" length="0"/>
+	</column>
+	<constraint name="history_real_deletion_pk" type="pk-constr" table="public.history_real_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_real_deletion_idx_table_column" table="public.history_real_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_smallint_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2952" y="472"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="history_smallint__deletion_pk" type="pk-constr" table="public.history_smallint_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_smallint_deletion_idx_table_column" table="public.history_smallint_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_bool_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3688" y="426"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="history_bool__deletion_pk" type="pk-constr" table="public.history_bool_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_bool_deletion_idx_table_column" table="public.history_bool_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_geography_point_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3713" y="189"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<constraint name="history_geography_point_deletion_pk" type="pk-constr" table="public.history_geography_point_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_geography_point_deletion_idx_table_column" table="public.history_geography_point_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_geography_linestring_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="3302" y="460"/>
+	<column name="id" not-null="true"
+	 identity-type="ALWAYS">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+	</column>
+	<constraint name="history_geography_linestring_deletion_pk" type="pk-constr" table="public.history_geography_linestring_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_geography_linestring_deletion_idx_table_column" table="public.history_geography_linestring_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
 		</idxelement>
 </index>
 
@@ -2272,6 +2609,48 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="history_text_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_text_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_integer_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_integer_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_real_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_real_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_smallint_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_smallint_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_bool_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_bool_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_geography_point_deletion_needs_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geography_point_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_geography_linestring_deletion_needs_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geography_linestring_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_pole_attachment_utility_pole" type="relfk" layer="0"
 	 src-table="public.pole_attachment"
 	 dst-table="public.utility_pole" reference-fk="pole_reference"
@@ -2645,6 +3024,41 @@ inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_att
 <relationship name="rel_underground_conduit_underground_conduit_type" type="relfk" layer="0"
 	 src-table="public.underground_conduit"
 	 dst-table="public.conduit_type" reference-fk="underground_conduit_has_a_conduit_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_text_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_text_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_text_deletion_belongs_to_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_integer_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_integer_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_integer_deletion_belongs_to_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_real_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_real_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_real_deletion_belongs_to_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_smallint_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_smallint_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_smallint_deletion_belongs_to_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_geography_point_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_geography_point_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_geography_point_deletion_needs_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_geography_linestring_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_geography_linestring_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_geography_linestring_deletion_needs_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_bool_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_bool_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_bool_deletion_belongs_to_history_row_deletion"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
