@@ -26,7 +26,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="height_meters">
 		<type name="real" length="0"/>
 	</column>
-	<column name="attached_pole" not-null="true">
+	<column name="utility_pole_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<column name="f_permitting_requested" default-value="false">
@@ -577,8 +577,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="pole_owner_primary_label">
 		<type name="text" length="0"/>
 	</column>
-	<column name="location">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	<column name="latlong" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<constraint name="utility_pole_id_pk" type="pk-constr" table="public.utility_pole">
 		<columns names="id" ref-type="src-columns"/>
@@ -674,7 +674,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 		<type name="integer" length="0"/>
 	</column>
 	<column name="latlong" not-null="true">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<column name="depth">
 		<type name="real" length="0"/>
@@ -717,7 +717,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 		<type name="integer" length="0"/>
 	</column>
 	<column name="conduit_route">
-		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
 	</column>
 	<column name="conduit_type_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1014,7 +1014,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<column name="fiber_cable_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="pole_attachement_id" not-null="true">
+	<column name="pole_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
 	<constraint name="fiber_cable_pole_attachment_pk" type="pk-constr" table="public.fiber_cable_pole_attachment">
@@ -1098,8 +1098,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<column name="building_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="attachment_point">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	<column name="attachment_point" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<constraint name="building_attachment_pk" type="pk-constr" table="public.building_attachment">
 		<columns names="id" ref-type="src-columns"/>
@@ -1124,6 +1124,57 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
+<view name="v_strand_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Union of all instances of classes decended from strand_attachment, which should be all the objects for representing where strand is attached to something, giving a uniform way to access the interface "strand_attachment" field regardless of how the inheriting classes implement it. TODO: expose point location of attachment.]]></comment>
+	<position x="480" y="20"/>
+	<reference>
+		<expression><![CDATA[(
+select 
+strand_to_strand_attachment.strand_attachment_id as id,
+strand_line_id,
+strand_attachment.strand_line_squence,
+ST_Line_Interpolate_Point(ST_MakeLine(u_p_a.latlong, u_p_b.latlong), percentage_along_segment) as latlong
+from strand_to_strand_attachment
+inner join strand_attachment on strand_to_strand_attachment.strand_attachment_id = strand_attachment.id
+left join strand_pole_attachment as s_p_a_a on strand_to_strand_attachment.segment_strand_attachment_a_id = s_p_a_a.id
+left join pole_attachment  as p_a_a on s_p_a_a.pole_attachment_id = p_a_a.id
+left join utility_pole as u_p_a on p_a_a.utility_pole_id = u_p_a.id
+left join strand_pole_attachment as s_p_a_b on strand_to_strand_attachment.segment_strand_attachment_b_id = s_p_a_b.id
+left join pole_attachment  as p_a_b on s_p_a_b.pole_attachment_id = p_a_b.id
+left join utility_pole as u_p_b on p_a_b.utility_pole_id = u_p_b.id
+)
+union all 
+(
+select 
+strand_attachment_id as id,
+strand_line_id,
+strand_attachment.strand_line_squence,
+utility_pole.latlong as latlong
+from strand_pole_attachment
+inner join strand_attachment on strand_pole_attachment.strand_attachment_id = strand_attachment.id
+inner join pole_attachment on strand_pole_attachment.pole_attachment_id = pole_attachment.id
+inner join utility_pole on pole_attachment.utility_pole_id = utility_pole.id
+)
+union all
+(
+select 
+strand_attachment_id as id,
+strand_line_id,
+strand_attachment.strand_line_squence,
+building_attachment.attachment_point as latlong
+from strand_building_attachment
+inner join strand_attachment on strand_building_attachment.strand_attachment_id = strand_attachment.id
+inner join building_attachment on strand_building_attachment.building_attachment_id = building_attachment.id
+)]]></expression>
+		<reftable name="public.strand_attachment"/>
+		<reftable name="public.strand_to_strand_attachment"/>
+		<reftable name="public.strand_pole_attachment"/>
+		<reftable name="public.strand_building_attachment"/>
+	</reference>
+</view>
+
 <view name="v_fiber_cable_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
 	<schema name="public"/>
 	<role name="postgres"/>
@@ -1134,9 +1185,17 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
-fiber_cable_id
+fiber_cable_id,
+case
+when (v_s_a_i_a.latlong is NOT NULL and  v_s_a_i_b.latlong is NOT NULL)
+then ST_Line_Interpolate_Point(ST_MakeLine( v_s_a_i_a.latlong,  v_s_a_i_b.latlong), segment_percentage)
+else v_s_a_i_a.latlong
+end as latlong
 from fiber_cable_strand_attachment
 inner join fiber_cable_attachment on fiber_cable_strand_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
+inner join v_strand_attachment_implementation as v_s_a_i_a on fiber_cable_strand_attachment.strand_attachment_a_id = v_s_a_i_a.id
+left join v_strand_attachment_implementation as v_s_a_i_b on fiber_cable_strand_attachment.strand_attachment_b_id = v_s_a_i_b.id
+
 )
 union all
 (
@@ -1144,9 +1203,12 @@ select
 fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
-fiber_cable_id
+fiber_cable_id,
+utility_pole.latlong as latlong
 from fiber_cable_pole_attachment
 inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
+inner join pole_attachment on fiber_cable_pole_attachment.pole_attachment_id = pole_attachment.id
+inner join utility_pole on pole_attachment.utility_pole_id = utility_pole.id
 )
 union all
 (
@@ -1154,54 +1216,16 @@ select
 fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
-fiber_cable_id
+fiber_cable_id,
+attachment_point as latlong
 from fiber_cable_building_attachment
 inner join fiber_cable_attachment on fiber_cable_building_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
+inner join building_attachment on fiber_cable_building_attachment.building_attachment_id = building_attachment.id
 )]]></expression>
 		<reftable name="public.fiber_cable_attachment"/>
 		<reftable name="public.fiber_cable_pole_attachment"/>
 		<reftable name="public.fiber_cable_strand_attachment"/>
 		<reftable name="public.fiber_cable_building_attachment"/>
-	</reference>
-</view>
-
-<view name="v_strand_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
-	<schema name="public"/>
-	<role name="postgres"/>
-	<comment><![CDATA[Union of all instances of classes decended from strand_attachment, which should be all the objects for representing where strand is attached to something, giving a uniform way to access the interface "strand_attachment" field regardless of how the inheriting classes implement it. TODO: expose point location of attachment.]]></comment>
-	<position x="480" y="20"/>
-	<reference>
-		<expression><![CDATA[(
-select 
-strand_attachment_id,
-strand_line_id,
-strand_attachment.strand_line_squence
-from strand_to_strand_attachment
-inner join strand_attachment on strand_to_strand_attachment.strand_attachment_id = strand_attachment.id
-)
-union all 
-(
-select 
-strand_attachment_id,
-strand_line_id,
-strand_attachment.strand_line_squence
-from strand_pole_attachment
-inner join strand_attachment on strand_pole_attachment.strand_attachment_id = strand_attachment.id
-)
-union all
-(
-select 
-strand_attachment_id,
-strand_line_id,
-strand_attachment.strand_line_squence
-from strand_building_attachment
-inner join strand_attachment on strand_building_attachment.strand_attachment_id = strand_attachment.id
-
-)]]></expression>
-		<reftable name="public.strand_attachment"/>
-		<reftable name="public.strand_to_strand_attachment"/>
-		<reftable name="public.strand_pole_attachment"/>
-		<reftable name="public.strand_building_attachment"/>
 	</reference>
 </view>
 
@@ -1757,7 +1781,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		</idxelement>
 </index>
 
-<table name="history_geography_point" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="history_geometry_point" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2184" y="6"/>
@@ -1778,17 +1802,17 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<column name="after_value">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
-	<constraint name="history_geography_point_pk" type="pk-constr" table="public.history_geography_point">
+	<constraint name="history_geography_point_pk" type="pk-constr" table="public.history_geometry_point">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<index name="history_geography_point_idx_table_column_date" table="public.history_geography_point"
+<index name="history_geography_point_idx_table_column_date" table="public.history_geometry_point"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
@@ -1802,7 +1826,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		</idxelement>
 </index>
 
-<table name="history_geography_linestring" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="history_geometry_linestring" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2183" y="181"/>
@@ -1823,17 +1847,17 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
-		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
 	</column>
 	<column name="after_value">
-		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
 	</column>
-	<constraint name="history_geography_linestring_pk" type="pk-constr" table="public.history_geography_linestring">
+	<constraint name="history_geography_linestring_pk" type="pk-constr" table="public.history_geometry_linestring">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<index name="history_geography_linestring_idx_table_column_date" table="public.history_geography_linestring"
+<index name="history_geography_linestring_idx_table_column_date" table="public.history_geometry_linestring"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
@@ -2100,7 +2124,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		</idxelement>
 </index>
 
-<table name="history_geography_point_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="history_geometry_point_deletion" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3713" y="189"/>
@@ -2124,14 +2148,14 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
-		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
-	<constraint name="history_geography_point_deletion_pk" type="pk-constr" table="public.history_geography_point_deletion">
+	<constraint name="history_geography_point_deletion_pk" type="pk-constr" table="public.history_geometry_point_deletion">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<index name="history_geography_point_deletion_idx_table_column" table="public.history_geography_point_deletion"
+<index name="history_geography_point_deletion_idx_table_column" table="public.history_geometry_point_deletion"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
@@ -2142,7 +2166,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		</idxelement>
 </index>
 
-<table name="history_geography_linestring_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="history_geometry_linestring_deletion" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3302" y="460"/>
@@ -2166,14 +2190,14 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 		<type name="text" length="0"/>
 	</column>
 	<column name="before_value">
-		<type name="geography" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
+		<type name="geometry" length="0" spatial-type="LINESTRING" variation="0" srid="4326"/>
 	</column>
-	<constraint name="history_geography_linestring_deletion_pk" type="pk-constr" table="public.history_geography_linestring_deletion">
+	<constraint name="history_geography_linestring_deletion_pk" type="pk-constr" table="public.history_geometry_linestring_deletion">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<index name="history_geography_linestring_deletion_idx_table_column" table="public.history_geography_linestring_deletion"
+<index name="history_geography_linestring_deletion_idx_table_column" table="public.history_geometry_linestring_deletion"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
@@ -2196,7 +2220,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
-	<columns names="attached_pole" ref-type="src-columns"/>
+	<columns names="utility_pole_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -2496,7 +2520,7 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 
 <constraint name="fiber_cable_pole_attachment_is_pole_attachment" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.pole_attachment" table="public.fiber_cable_pole_attachment">
-	<columns names="pole_attachement_id" ref-type="src-columns"/>
+	<columns names="pole_attachment_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -2675,13 +2699,13 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 </constraint>
 
 <constraint name="history_geography_point_deletion_needs_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geography_point_deletion">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geometry_point_deletion">
 	<columns names="history_row_deletion_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="history_geography_linestring_deletion_needs_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geography_linestring_deletion">
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geometry_linestring_deletion">
 	<columns names="history_row_deletion_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
@@ -3082,12 +3106,12 @@ inner join strand_attachment on strand_building_attachment.strand_attachment_id 
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_history_geography_point_deletion_history_row_deletion" type="relfk" layer="0"
-	 src-table="public.history_geography_point_deletion"
+	 src-table="public.history_geometry_point_deletion"
 	 dst-table="public.history_row_deletion" reference-fk="history_geography_point_deletion_needs_history_row_deletion"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_history_geography_linestring_deletion_history_row_deletion" type="relfk" layer="0"
-	 src-table="public.history_geography_linestring_deletion"
+	 src-table="public.history_geometry_linestring_deletion"
 	 dst-table="public.history_row_deletion" reference-fk="history_geography_linestring_deletion_needs_row_deletion"
 	 src-required="false" dst-required="false"/>
 
