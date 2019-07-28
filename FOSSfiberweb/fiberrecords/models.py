@@ -28,7 +28,7 @@ class Building(models.Model):
 class BuildingAttachment(models.Model):
     id = models.IntegerField(primary_key=True)
     building = models.ForeignKey(Building, models.DO_NOTHING)
-    attachment_point = models.PointField(geography=True, blank=True, null=True)
+    attachment_point = models.PointField()
 
     class Meta:
         managed = False
@@ -165,7 +165,7 @@ class FiberCableLocatedInFiberEnclosure(models.Model):
 class FiberCablePoleAttachment(models.Model):
     id = models.IntegerField(primary_key=True)
     fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
-    pole_attachement = models.ForeignKey('PoleAttachment', models.DO_NOTHING)
+    pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -388,60 +388,60 @@ class HistoryBoolDeletion(models.Model):
         db_table = 'history_bool_deletion'
 
 
-class HistoryGeographyLinestring(models.Model):
+class HistoryGeometryLinestring(models.Model):
     id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
     username = models.TextField(blank=True, null=True)
-    before_value = models.LineStringField(geography=True, blank=True, null=True)
-    after_value = models.LineStringField(geography=True, blank=True, null=True)
+    before_value = models.LineStringField(blank=True, null=True)
+    after_value = models.LineStringField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'history_geography_linestring'
+        db_table = 'history_geometry_linestring'
 
 
-class HistoryGeographyLinestringDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
-    history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
-    column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
-    before_value = models.LineStringField(geography=True, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'history_geography_linestring_deletion'
-
-
-class HistoryGeographyPoint(models.Model):
-    id = models.IntegerField(primary_key=True)
-    table_name = models.TextField()
-    column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
-    before_value = models.PointField(geography=True, blank=True, null=True)
-    after_value = models.PointField(geography=True, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'history_geography_point'
-
-
-class HistoryGeographyPointDeletion(models.Model):
+class HistoryGeometryLinestringDeletion(models.Model):
     id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
     username = models.TextField(blank=True, null=True)
-    before_value = models.PointField(geography=True, blank=True, null=True)
+    before_value = models.LineStringField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'history_geography_point_deletion'
+        db_table = 'history_geometry_linestring_deletion'
+
+
+class HistoryGeometryPoint(models.Model):
+    id = models.IntegerField(primary_key=True)
+    table_name = models.TextField()
+    column_name = models.TextField()
+    change_date = models.DateTimeField()
+    username = models.TextField(blank=True, null=True)
+    before_value = models.PointField(blank=True, null=True)
+    after_value = models.PointField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'history_geometry_point'
+
+
+class HistoryGeometryPointDeletion(models.Model):
+    id = models.IntegerField(primary_key=True)
+    history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
+    table_name = models.TextField()
+    column_name = models.TextField()
+    change_date = models.DateTimeField()
+    username = models.TextField(blank=True, null=True)
+    before_value = models.PointField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'history_geometry_point_deletion'
 
 
 class HistoryInteger(models.Model):
@@ -704,7 +704,7 @@ class OpticalSplitterTypes(models.Model):
 class PoleAttachment(models.Model):
     id = models.IntegerField(primary_key=True)
     height_meters = models.FloatField(blank=True, null=True)
-    attached_pole = models.ForeignKey('UtilityPole', models.DO_NOTHING, db_column='attached_pole')
+    utility_pole = models.ForeignKey('UtilityPole', models.DO_NOTHING)
     f_permitting_requested = models.BooleanField(blank=True, null=True)
     f_permitting_granted = models.BooleanField()
     f_built = models.BooleanField(blank=True, null=True)
@@ -802,7 +802,7 @@ class UndergroundConduit(models.Model):
     length = models.FloatField(blank=True, null=True)
     start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
     end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
-    conduit_route = models.LineStringField(geography=True, blank=True, null=True)
+    conduit_route = models.LineStringField(blank=True, null=True)
     conduit_type = models.ForeignKey(ConduitType, models.DO_NOTHING)
 
     class Meta:
@@ -812,7 +812,7 @@ class UndergroundConduit(models.Model):
 
 class UndergroundVault(models.Model):
     id = models.IntegerField(primary_key=True)
-    latlong = models.PointField(geography=True)
+    latlong = models.PointField()
     depth = models.FloatField(blank=True, null=True)
     width = models.FloatField(blank=True, null=True)
     length = models.FloatField(blank=True, null=True)
@@ -844,7 +844,7 @@ class UtilityPole(models.Model):
     id = models.IntegerField(primary_key=True)
     pole_owner = models.TextField(blank=True, null=True)
     pole_owner_primary_label = models.TextField(blank=True, null=True)
-    location = models.PointField(geography=True, blank=True, null=True)
+    latlong = models.PointField()
 
     class Meta:
         managed = False
