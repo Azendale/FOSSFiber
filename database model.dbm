@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" author="Copyright 2019, Erik Andersen &lt;erik@eoni.com&gt;, Licensed under the AGPLv3 with use by employees considered distribution; distribution of modified source must also include making the source publicly available" last-position="0,1009" last-zoom="0.8" max-obj-count="109"
-	 default-schema="public" default-owner="postgres">
+<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="0,0" last-zoom="1" max-obj-count="109"
+	 default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
 </database>
@@ -210,7 +210,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="optical_connector_types" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4740" y="1180"/>
+	<position x="3997.14" y="1965.71"/>
 	<column name="id" not-null="true"
 	 identity-type="BY DEFAULT">
 		<type name="smallint" length="0"/>
@@ -643,7 +643,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="fiber_splice" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="4600" y="1500"/>
+	<position x="4002.86" y="1042.86"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -948,21 +948,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<relationship name="rel_v_strand_attachment_implementation_strand_attachment" type="reltv" layer="0"
-	 src-table="public.v_strand_attachment_implementation"
-	 dst-table="public.strand_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_v_strand_attachment_implementation_strand_to_strand__4572" type="reltv" layer="0"
-	 src-table="public.v_strand_attachment_implementation"
-	 dst-table="public.strand_to_strand_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_v_strand_attachment_implementation_strand_pole_att_4574" type="reltv" layer="0"
-	 src-table="public.v_strand_attachment_implementation"
-	 dst-table="public.strand_pole_attachment"
-	 src-required="false" dst-required="false"/>
-
 <table name="fiber_cable_attachment" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
 	<role name="postgres"/>
@@ -1041,21 +1026,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4646" type="reltv" layer="0"
-	 src-table="public.v_fiber_cable_attachment_implementation"
-	 dst-table="public.fiber_cable_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4648" type="reltv" layer="0"
-	 src-table="public.v_fiber_cable_attachment_implementation"
-	 dst-table="public.fiber_cable_pole_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4650" type="reltv" layer="0"
-	 src-table="public.v_fiber_cable_attachment_implementation"
-	 dst-table="public.fiber_cable_strand_attachment"
-	 src-required="false" dst-required="false"/>
-
 <table name="building" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
@@ -1127,7 +1097,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <view name="v_strand_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<comment><![CDATA[Union of all instances of classes decended from strand_attachment, which should be all the objects for representing where strand is attached to something, giving a uniform way to access the interface "strand_attachment" field regardless of how the inheriting classes implement it. TODO: expose point location of attachment.]]></comment>
+	<comment><![CDATA[Union of all instances of classes decended from strand_attachment, which should be all the objects for representing where strand is attached to something, giving a uniform way to access the interface "strand_attachment" field regardless of how the inheriting classes implement it.]]></comment>
 	<position x="480" y="20"/>
 	<reference>
 		<expression><![CDATA[(
@@ -1135,7 +1105,7 @@ select
 strand_to_strand_attachment.strand_attachment_id as id,
 strand_line_id,
 strand_attachment.strand_line_squence,
-ST_Line_Interpolate_Point(ST_MakeLine(u_p_a.latlong, u_p_b.latlong), percentage_along_segment) as latlong
+CAST(ST_Line_Interpolate_Point(ST_MakeLine(u_p_a.latlong, u_p_b.latlong), percentage_along_segment)  as geometry(point, 4326)) as latlong
 from strand_to_strand_attachment
 inner join strand_attachment on strand_to_strand_attachment.strand_attachment_id = strand_attachment.id
 left join strand_pole_attachment as s_p_a_a on strand_to_strand_attachment.segment_strand_attachment_a_id = s_p_a_a.id
@@ -1151,7 +1121,7 @@ select
 strand_attachment_id as id,
 strand_line_id,
 strand_attachment.strand_line_squence,
-utility_pole.latlong as latlong
+CAST(utility_pole.latlong as geometry(point, 4326)) as latlong
 from strand_pole_attachment
 inner join strand_attachment on strand_pole_attachment.strand_attachment_id = strand_attachment.id
 inner join pole_attachment on strand_pole_attachment.pole_attachment_id = pole_attachment.id
@@ -1163,7 +1133,7 @@ select
 strand_attachment_id as id,
 strand_line_id,
 strand_attachment.strand_line_squence,
-building_attachment.attachment_point as latlong
+CAST(building_attachment.attachment_point as geometry(point, 4326)) as latlong
 from strand_building_attachment
 inner join strand_attachment on strand_building_attachment.strand_attachment_id = strand_attachment.id
 inner join building_attachment on strand_building_attachment.building_attachment_id = building_attachment.id
@@ -1174,6 +1144,26 @@ inner join building_attachment on strand_building_attachment.building_attachment
 		<reftable name="public.strand_building_attachment"/>
 	</reference>
 </view>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_attachment" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_to_strand__4572" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_to_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_pole_att_4574" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_strand_attachment_implementation_strand_building_a_5521" type="reltv" layer="0"
+	 src-table="public.v_strand_attachment_implementation"
+	 dst-table="public.strand_building_attachment"
+	 src-required="false" dst-required="false"/>
 
 <view name="v_fiber_cable_attachment_implementation" layer="0" collapse-mode="2" max-obj-count="1">
 	<schema name="public"/>
@@ -1186,11 +1176,11 @@ fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
 fiber_cable_id,
-case
+CAST(case
 when (v_s_a_i_a.latlong is NOT NULL and  v_s_a_i_b.latlong is NOT NULL)
 then ST_Line_Interpolate_Point(ST_MakeLine( v_s_a_i_a.latlong,  v_s_a_i_b.latlong), segment_percentage)
 else v_s_a_i_a.latlong
-end as latlong
+end as geometry(point, 4326)) as latlong
 from fiber_cable_strand_attachment
 inner join fiber_cable_attachment on fiber_cable_strand_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
 inner join v_strand_attachment_implementation as v_s_a_i_a on fiber_cable_strand_attachment.strand_attachment_a_id = v_s_a_i_a.id
@@ -1204,7 +1194,7 @@ fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
 fiber_cable_id,
-utility_pole.latlong as latlong
+CAST(utility_pole.latlong as geometry(point, 4326)) as latlong
 from fiber_cable_pole_attachment
 inner join fiber_cable_attachment on fiber_cable_pole_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
 inner join pole_attachment on fiber_cable_pole_attachment.pole_attachment_id = pole_attachment.id
@@ -1217,7 +1207,7 @@ fiber_cable_attachment_id,
 fiber_cable_meterage,
 fiber_cable_meterage_is_guess,
 fiber_cable_id,
-attachment_point as latlong
+CAST(attachment_point as geometry(point, 4326)) as latlong
 from fiber_cable_building_attachment
 inner join fiber_cable_attachment on fiber_cable_building_attachment.fiber_cable_attachment_id = fiber_cable_attachment.id
 inner join building_attachment on fiber_cable_building_attachment.building_attachment_id = building_attachment.id
@@ -1228,6 +1218,26 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 		<reftable name="public.fiber_cable_building_attachment"/>
 	</reference>
 </view>
+
+<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4646" type="reltv" layer="0"
+	 src-table="public.v_fiber_cable_attachment_implementation"
+	 dst-table="public.fiber_cable_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4648" type="reltv" layer="0"
+	 src-table="public.v_fiber_cable_attachment_implementation"
+	 dst-table="public.fiber_cable_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__4650" type="reltv" layer="0"
+	 src-table="public.v_fiber_cable_attachment_implementation"
+	 dst-table="public.fiber_cable_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__5514" type="reltv" layer="0"
+	 src-table="public.v_fiber_cable_attachment_implementation"
+	 dst-table="public.fiber_cable_building_attachment"
+	 src-required="false" dst-required="false"/>
 
 <table name="fiber_enclosure_template" layer="0" collapse-mode="1" max-obj-count="4">
 	<schema name="public"/>
@@ -1396,7 +1406,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Template with predefined values for optical_splitters and related tables.]]></comment>
-	<position x="3150" y="1806.67"/>
+	<position x="2632.86" y="1815.24"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1424,7 +1434,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <table name="optical_splitter_output_template" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3461.67" y="1673.33"/>
+	<position x="3004.53" y="1690.47"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1453,7 +1463,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <table name="optical_splitter_input_template" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3465" y="1848.33"/>
+	<position x="3010.71" y="1848.33"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -1482,7 +1492,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <table name="optical_splitter_template_fiber_end" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="3895" y="1793.33"/>
+	<position x="3480.71" y="1824.76"/>
 	<column name="id" not-null="true"
 	 identity-type="ALWAYS">
 		<type name="integer" length="0"/>
@@ -2208,16 +2218,6 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 		</idxelement>
 </index>
 
-<relationship name="rel_v_fiber_cable_attachment_implementation_fiber_cable__5514" type="reltv" layer="0"
-	 src-table="public.v_fiber_cable_attachment_implementation"
-	 dst-table="public.fiber_cable_building_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_v_strand_attachment_implementation_strand_building_a_5521" type="reltv" layer="0"
-	 src-table="public.v_strand_attachment_implementation"
-	 dst-table="public.strand_building_attachment"
-	 src-required="false" dst-required="false"/>
-
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
 	<columns names="utility_pole_id" ref-type="src-columns"/>
@@ -2506,6 +2506,18 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="strand_building_attachment_has_strand_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_building_attachment">
+	<columns names="strand_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="strand_building_attachment_has_building_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building_attachment" table="public.strand_building_attachment">
+	<columns names="building_attachment_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="fiber_cable_attachment_has_fiber_cable" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_cable" table="public.fiber_cable_attachment">
 	<columns names="fiber_cable_id" ref-type="src-columns"/>
@@ -2530,18 +2542,6 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="building_attachment_need_building" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building" table="public.building_attachment">
-	<columns names="building_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="building_attachment_inheritance_has_building_attachment" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building_attachment" table="public.building_attachment_meta_instance">
-	<columns names="building_attachment_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="fiber_cable_building_attachment_has_building" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building_attachment" table="public.fiber_cable_building_attachment">
 	<columns names="building_attachment_id" ref-type="src-columns"/>
@@ -2554,14 +2554,14 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="strand_building_attachment_has_strand_attachment" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.strand_attachment" table="public.strand_building_attachment">
-	<columns names="strand_attachment_id" ref-type="src-columns"/>
+<constraint name="building_attachment_need_building" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building" table="public.building_attachment">
+	<columns names="building_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="strand_building_attachment_has_building_attachment" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building_attachment" table="public.strand_building_attachment">
+<constraint name="building_attachment_inheritance_has_building_attachment" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.building_attachment" table="public.building_attachment_meta_instance">
 	<columns names="building_attachment_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
@@ -2720,9 +2720,39 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.strand_line" reference-fk="ref_strand_line"
 	 src-required="false" dst-required="false"/>
 
+<relationship name="rel_strand_to_strand_attachment_strand_attachment" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_to_strand_attachment_is_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_to_strand_attachment_strand_attachment1" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_a_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_to_strand_attachment_strand_attachment2" type="relfk" layer="0"
+	 src-table="public.strand_to_strand_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_b_attachment"
+	 src-required="false" dst-required="false"/>
+
 <relationship name="rel_strand_guy_wire_pole_attachment" type="relfk" layer="0"
 	 src-table="public.strand_guy_wire"
 	 dst-table="public.pole_attachment" reference-fk="ref_pole_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_optical_splitter_types" type="relfk" layer="0"
+	 src-table="public.optical_splitter"
+	 dst-table="public.optical_splitter_types" reference-fk="optical_splitters_are_one_of_standard_types"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_optical_splitter_styles" type="relfk" layer="0"
+	 src-table="public.optical_splitter"
+	 dst-table="public.optical_splitter_styles" reference-fk="optical_splitters_are_one_of_a_standard_style"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_fiber_enclosure" type="relfk" layer="0"
+	 src-table="public.optical_splitter"
+	 dst-table="public.fiber_enclosure" reference-fk="splitter_can_be_located_inside_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_enclosure_port_fiber_enclosure" type="relfk" layer="0"
@@ -2730,14 +2760,19 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_enclosure" reference-fk="ref_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_group_fiber_group_types" type="relfk" layer="0"
-	 src-table="public.fiber_group"
-	 dst-table="public.fiber_group_types" reference-fk="fiber_group_has_one_fiber_group_type"
+<relationship name="rel_enclosure_port_fiber_connection" type="relfk" layer="0"
+	 src-table="public.enclosure_port"
+	 dst-table="public.fiber_connection" reference-fk="enclosure_port_inherits_from_fiber_connection"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_cable_length_units" type="relfk" layer="0"
 	 src-table="public.fiber_cable"
 	 dst-table="public.length_units" reference-fk="fiber_cable_has_one_length_unit"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_group_fiber_group_types" type="relfk" layer="0"
+	 src-table="public.fiber_group"
+	 dst-table="public.fiber_group_types" reference-fk="fiber_group_has_one_fiber_group_type"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_group_fiber_cable" type="relfk" layer="0"
@@ -2755,19 +2790,9 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber" reference-fk="fiber_has_potentially_multiple_group_identifiers"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_cable_slack_loop_fiber_cable" type="relfk" layer="0"
+<relationship name="rel_fiber_cable_slack_coil_fiber_cable" type="relfk" layer="0"
 	 src-table="public.fiber_cable_slack_coil"
 	 dst-table="public.fiber_cable" reference-fk="fiber_cable_can_have_many_slack_coils"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_optical_splitter_optical_splitter_types" type="relfk" layer="0"
-	 src-table="public.optical_splitter"
-	 dst-table="public.optical_splitter_types" reference-fk="optical_splitters_are_one_of_standard_types"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_optical_splitter_optical_splitter_styles" type="relfk" layer="0"
-	 src-table="public.optical_splitter"
-	 dst-table="public.optical_splitter_styles" reference-fk="optical_splitters_are_one_of_a_standard_style"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_optical_splitter_output_optical_splitter" type="relfk" layer="0"
@@ -2775,14 +2800,24 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.optical_splitter" reference-fk="optical_splitter_outputs_belong_to_a_splitter"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_output_cp_optical_splitter" type="relfk" layer="0"
+<relationship name="rel_optical_splitter_output_fiber_end" type="relfk" layer="0"
+	 src-table="public.optical_splitter_output"
+	 dst-table="public.fiber_end" reference-fk="optical_splitter_outputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_input_optical_splitter" type="relfk" layer="0"
 	 src-table="public.optical_splitter_input"
 	 dst-table="public.optical_splitter" reference-fk="optical_splitter_inputs_belong_to_a_splitter"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_fiber_enclosure" type="relfk" layer="0"
-	 src-table="public.optical_splitter"
-	 dst-table="public.fiber_enclosure" reference-fk="splitter_can_be_located_inside_fiber_enclosure"
+<relationship name="rel_optical_splitter_input_fiber_end" type="relfk" layer="0"
+	 src-table="public.optical_splitter_input"
+	 dst-table="public.fiber_end" reference-fk="optical_splitter_inputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_end_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.fiber_end"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_cable_fiber_end_fiber" type="relfk" layer="0"
@@ -2795,24 +2830,24 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_end" reference-fk="cable_fiber_end_inherts_from_fiber_end"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_output_fiber_end" type="relfk" layer="0"
-	 src-table="public.optical_splitter_output"
-	 dst-table="public.fiber_end" reference-fk="optical_splitter_outputs_are_a_fiber"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_optical_splitter_input_fiber_end" type="relfk" layer="0"
-	 src-table="public.optical_splitter_input"
-	 dst-table="public.fiber_end" reference-fk="optical_splitter_inputs_are_a_fiber"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_splice_fiber_end" type="relfk" layer="0"
+<relationship name="rel_fiber_connection_fiber_end" type="relfk" layer="0"
 	 src-table="public.fiber_connection"
 	 dst-table="public.fiber_end" reference-fk="fiber_connection_may_connect_fiber_end_a"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_splice_fiber_end1" type="relfk" layer="0"
+<relationship name="rel_fiber_connection_fiber_end1" type="relfk" layer="0"
 	 src-table="public.fiber_connection"
 	 dst-table="public.fiber_end" reference-fk="fiber_connection_may_connect_fiber_end_b"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.fiber_connection"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_optical_connector_types1" type="relfk" layer="0"
+	 src-table="public.fiber_connection"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_splice_fiber_connection" type="relfk" layer="0"
@@ -2835,12 +2870,17 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.underground_vault" reference-fk="underground_conduit_may_end_at_underground_vault"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_cable_slack_loop_located_in_underground_vault_undergr" type="relfk" layer="0"
+<relationship name="rel_underground_conduit_conduit_type" type="relfk" layer="0"
+	 src-table="public.underground_conduit"
+	 dst-table="public.conduit_type" reference-fk="underground_conduit_has_a_conduit_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_cable_slack_coil_located_in_underground_vault_undergr" type="relfk" layer="0"
 	 src-table="public.fiber_cable_slack_coil_located_in_underground_vault"
 	 dst-table="public.underground_vault" reference-fk="m2m_fiber_cable_slack_coil_underground_vault"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_cable_slack_loop_located_in_underground_vault_fiber_c" type="relfk" layer="0"
+<relationship name="rel_fiber_cable_slack_coil_located_in_underground_vault_fiber_c" type="relfk" layer="0"
 	 src-table="public.fiber_cable_slack_coil_located_in_underground_vault"
 	 dst-table="public.fiber_cable_slack_coil" reference-fk="m2m_underground_vault_fiber_cable_slack_coil"
 	 src-required="false" dst-required="false"/>
@@ -2855,34 +2895,14 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.underground_vault" reference-fk="m2m_underground_vault_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_end_instance_inheritance_fiber_end" type="relfk" layer="0"
+<relationship name="rel_fiber_end_meta_instance_inheritance_fiber_end" type="relfk" layer="0"
 	 src-table="public.fiber_end_meta_instance_inheritance"
 	 dst-table="public.fiber_end" reference-fk="fiber_end_inheritance_has_fiber_end_instance"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_enclosure_port_fiber_connection" type="relfk" layer="0"
-	 src-table="public.enclosure_port"
-	 dst-table="public.fiber_connection" reference-fk="enclosure_port_inherits_from_fiber_connection"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_connection_meta_instance_inheritance_fiber_connection" type="relfk" layer="0"
 	 src-table="public.fiber_connection_meta_instance_inheritance"
 	 dst-table="public.fiber_connection" reference-fk="fiber_connection_can_be_inherited_by_many_tables"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_end_optical_connector_types" type="relfk" layer="0"
-	 src-table="public.fiber_end"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_connection_optical_connector_types" type="relfk" layer="0"
-	 src-table="public.fiber_connection"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_connection_optical_connector_types1" type="relfk" layer="0"
-	 src-table="public.fiber_connection"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_cable_located_in_fiber_enclosure_fiber_cable" type="relfk" layer="0"
@@ -2905,14 +2925,14 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.strand_attachment" reference-fk="ref_fiber_cable_strand_attachment_may_have_strand_attachment_b"
 	 src-required="false" dst-required="false"/>
 
+<relationship name="rel_fiber_cable_strand_attachment_fiber_cable_attachment" type="relfk" layer="0"
+	 src-table="public.fiber_cable_strand_attachment"
+	 dst-table="public.fiber_cable_attachment" reference-fk="fiber_cable_strand_attachment_is_fiber_cable_attachment"
+	 src-required="false" dst-required="false"/>
+
 <relationship name="rel_strand_pole_attachment_pole_attachment" type="relfk" layer="0"
 	 src-table="public.strand_pole_attachment"
 	 dst-table="public.pole_attachment" reference-fk="strand_pole_attachment_is_pole_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_pole_attachment_meta_instance_inheritance_pole_attachment" type="relfk" layer="0"
-	 src-table="public.pole_attachment_meta_instance_inheritance"
-	 dst-table="public.pole_attachment" reference-fk="pole_attachment_inheritance_requires_pole_attachment_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_strand_pole_attachment_strand_attachment" type="relfk" layer="0"
@@ -2920,19 +2940,9 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.strand_attachment" reference-fk="strand_pole_attachment_is_strand_attachment"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_strand_to_strand_attachment_strand_attachment" type="relfk" layer="0"
-	 src-table="public.strand_to_strand_attachment"
-	 dst-table="public.strand_attachment" reference-fk="strand_to_strand_attachment_is_strand_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_strand_to_strand_attachment_strand_attachment1" type="relfk" layer="0"
-	 src-table="public.strand_to_strand_attachment"
-	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_a_attachment"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_strand_to_strand_attachment_strand_attachment2" type="relfk" layer="0"
-	 src-table="public.strand_to_strand_attachment"
-	 dst-table="public.strand_attachment" reference-fk="strand_segment_has_end_b_attachment"
+<relationship name="rel_pole_attachment_meta_instance_inheritance_pole_attachment" type="relfk" layer="0"
+	 src-table="public.pole_attachment_meta_instance_inheritance"
+	 dst-table="public.pole_attachment" reference-fk="pole_attachment_inheritance_requires_pole_attachment_id"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_strand_attachment_meta_instance_inheritance_strand_attachme" type="relfk" layer="0"
@@ -2940,14 +2950,19 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.strand_attachment" reference-fk="strand_attachment_instance_inheritance_has_strand_attachment_id"
 	 src-required="false" dst-required="false"/>
 
+<relationship name="rel_strand_building_attachment_strand_attachment" type="relfk" layer="0"
+	 src-table="public.strand_building_attachment"
+	 dst-table="public.strand_attachment" reference-fk="strand_building_attachment_has_strand_attachment"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_strand_building_attachment_building_attachment" type="relfk" layer="0"
+	 src-table="public.strand_building_attachment"
+	 dst-table="public.building_attachment" reference-fk="strand_building_attachment_has_building_attachment"
+	 src-required="false" dst-required="false"/>
+
 <relationship name="rel_fiber_cable_attachment_fiber_cable" type="relfk" layer="0"
 	 src-table="public.fiber_cable_attachment"
 	 dst-table="public.fiber_cable" reference-fk="fiber_cable_attachment_has_fiber_cable"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_cable_strand_attachment_fiber_cable_attachment" type="relfk" layer="0"
-	 src-table="public.fiber_cable_strand_attachment"
-	 dst-table="public.fiber_cable_attachment" reference-fk="fiber_cable_strand_attachment_is_fiber_cable_attachment"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_fiber_cable_attachment_meta_instance_inheritance_fiber_cabl" type="relfk" layer="0"
@@ -2965,16 +2980,6 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_cable_attachment" reference-fk="fiber_cable_pole_attachment_is_fiber_cable_attachment"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_building_attachment_building" type="relfk" layer="0"
-	 src-table="public.building_attachment"
-	 dst-table="public.building" reference-fk="building_attachment_need_building"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_building_attachment_meta_instance_building_attachment" type="relfk" layer="0"
-	 src-table="public.building_attachment_meta_instance"
-	 dst-table="public.building_attachment" reference-fk="building_attachment_inheritance_has_building_attachment"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_fiber_cable_building_attachment_building_attachment" type="relfk" layer="0"
 	 src-table="public.fiber_cable_building_attachment"
 	 dst-table="public.building_attachment" reference-fk="fiber_cable_building_attachment_has_building"
@@ -2985,14 +2990,14 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_cable_attachment" reference-fk="fiber_cable_building_attachment_has_fiber_cable_attachment"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_strand_building_attachment_strand_attachment" type="relfk" layer="0"
-	 src-table="public.strand_building_attachment"
-	 dst-table="public.strand_attachment" reference-fk="strand_building_attachment_has_strand_attachment"
+<relationship name="rel_building_attachment_building" type="relfk" layer="0"
+	 src-table="public.building_attachment"
+	 dst-table="public.building" reference-fk="building_attachment_need_building"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_strand_building_attachment_building_attachment" type="relfk" layer="0"
-	 src-table="public.strand_building_attachment"
-	 dst-table="public.building_attachment" reference-fk="strand_building_attachment_has_building_attachment"
+<relationship name="rel_building_attachment_meta_instance_building_attachment" type="relfk" layer="0"
+	 src-table="public.building_attachment_meta_instance"
+	 dst-table="public.building_attachment" reference-fk="building_attachment_inheritance_has_building_attachment"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_enclosure_port_template_fiber_enclosure_template" type="relfk" layer="0"
@@ -3000,27 +3005,27 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_enclosure_template" reference-fk="ref_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_connection_cp_optical_connector_types" type="relfk" layer="0"
-	 src-table="public.fiber_connection_enclosure_port_template"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type_cp"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_connection_cp_optical_connector_types1" type="relfk" layer="0"
-	 src-table="public.fiber_connection_enclosure_port_template"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type_cp"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_enclosure_port_template_fiber_connection_enclosure_port_tem" type="relfk" layer="0"
 	 src-table="public.enclosure_port_template"
 	 dst-table="public.fiber_connection_enclosure_port_template" reference-fk="enclosure_port_inherits_from_fiber_connection"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_cable_cp_length_units" type="relfk" layer="0"
+<relationship name="rel_fiber_connection_enclosure_port_template_optical_connector_" type="relfk" layer="0"
+	 src-table="public.fiber_connection_enclosure_port_template"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_a_may_have_optical_connector_type_cp"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_connection_enclosure_port_template_optical_con_4870" type="relfk" layer="0"
+	 src-table="public.fiber_connection_enclosure_port_template"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_connection_b_may_have_optical_connector_type_cp"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fiber_cable_template_length_units" type="relfk" layer="0"
 	 src-table="public.fiber_cable_template"
 	 dst-table="public.length_units" reference-fk="fiber_cable_template_has_one_length_unit"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_fiber_group_cp_fiber_group_types" type="relfk" layer="0"
+<relationship name="rel_fiber_group_template_fiber_group_types" type="relfk" layer="0"
 	 src-table="public.fiber_group_template"
 	 dst-table="public.fiber_group_types" reference-fk="fiber_group_template_has_one_fiber_group_type"
 	 src-required="false" dst-required="false"/>
@@ -3030,12 +3035,12 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.fiber_cable_template" reference-fk="fiber_group_template_belongs_to_fiber_cable_template"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_cp_optical_splitter_types" type="relfk" layer="0"
+<relationship name="rel_optical_splitter_template_optical_splitter_types" type="relfk" layer="0"
 	 src-table="public.optical_splitter_template"
 	 dst-table="public.optical_splitter_types" reference-fk="optical_splitters_are_one_of_standard_types"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_cp_optical_splitter_styles" type="relfk" layer="0"
+<relationship name="rel_optical_splitter_template_optical_splitter_styles" type="relfk" layer="0"
 	 src-table="public.optical_splitter_template"
 	 dst-table="public.optical_splitter_styles" reference-fk="optical_splitters_templates_are_one_of_a_standard_style"
 	 src-required="false" dst-required="false"/>
@@ -3045,19 +3050,14 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.optical_splitter_template" reference-fk="optical_splitter_outputs_templates_belong_to_a_splitter_templat"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_optical_splitter_input_template_optical_splitter_template" type="relfk" layer="0"
-	 src-table="public.optical_splitter_input_template"
-	 dst-table="public.optical_splitter_template" reference-fk="optical_splitter_inputs_templates_belong_to_a_splitter_template"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_end_cp_optical_connector_types" type="relfk" layer="0"
-	 src-table="public.optical_splitter_template_fiber_end"
-	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_optical_splitter_output_template_optical_splitter_template_" type="relfk" layer="0"
 	 src-table="public.optical_splitter_output_template"
 	 dst-table="public.optical_splitter_template_fiber_end" reference-fk="optical_splitter_outputs_are_a_fiber"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_optical_splitter_input_template_optical_splitter_template" type="relfk" layer="0"
+	 src-table="public.optical_splitter_input_template"
+	 dst-table="public.optical_splitter_template" reference-fk="optical_splitter_inputs_templates_belong_to_a_splitter_template"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_optical_splitter_input_template_optical_splitter_template_f" type="relfk" layer="0"
@@ -3065,24 +3065,24 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.optical_splitter_template_fiber_end" reference-fk="optical_splitter_inputs_are_a_fiber"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_underground_vault_cp_length_units" type="relfk" layer="0"
+<relationship name="rel_optical_splitter_template_fiber_end_optical_connector_types" type="relfk" layer="0"
+	 src-table="public.optical_splitter_template_fiber_end"
+	 dst-table="public.optical_connector_types" reference-fk="fiber_end_can_have_optical_connector_type"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_underground_vault_template_length_units" type="relfk" layer="0"
 	 src-table="public.underground_vault_template"
 	 dst-table="public.length_units" reference-fk="demensions_measurements_must_have_unit"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_underground_conduit_cp_length_units" type="relfk" layer="0"
+<relationship name="rel_conduit_type_length_units" type="relfk" layer="0"
 	 src-table="public.conduit_type"
 	 dst-table="public.length_units" reference-fk="length_has_unit"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_underground_conduit_cp_length_units1" type="relfk" layer="0"
+<relationship name="rel_conduit_type_length_units1" type="relfk" layer="0"
 	 src-table="public.conduit_type"
 	 dst-table="public.length_units" reference-fk="diameter_has_unit"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_underground_conduit_underground_conduit_type" type="relfk" layer="0"
-	 src-table="public.underground_conduit"
-	 dst-table="public.conduit_type" reference-fk="underground_conduit_has_a_conduit_type"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_history_text_deletion_history_row_deletion" type="relfk" layer="0"
@@ -3105,19 +3105,19 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	 dst-table="public.history_row_deletion" reference-fk="history_smallint_deletion_belongs_to_history_row_deletion"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_history_geography_point_deletion_history_row_deletion" type="relfk" layer="0"
+<relationship name="rel_history_bool_deletion_history_row_deletion" type="relfk" layer="0"
+	 src-table="public.history_bool_deletion"
+	 dst-table="public.history_row_deletion" reference-fk="history_bool_deletion_belongs_to_history_row_deletion"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_history_geometry_point_deletion_history_row_deletion" type="relfk" layer="0"
 	 src-table="public.history_geometry_point_deletion"
 	 dst-table="public.history_row_deletion" reference-fk="history_geography_point_deletion_needs_history_row_deletion"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_history_geography_linestring_deletion_history_row_deletion" type="relfk" layer="0"
+<relationship name="rel_history_geometry_linestring_deletion_history_row_deletion" type="relfk" layer="0"
 	 src-table="public.history_geometry_linestring_deletion"
 	 dst-table="public.history_row_deletion" reference-fk="history_geography_linestring_deletion_needs_row_deletion"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_history_bool_deletion_history_row_deletion" type="relfk" layer="0"
-	 src-table="public.history_bool_deletion"
-	 dst-table="public.history_row_deletion" reference-fk="history_bool_deletion_belongs_to_history_row_deletion"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
