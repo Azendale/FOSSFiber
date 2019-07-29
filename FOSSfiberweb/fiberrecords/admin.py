@@ -1,6 +1,6 @@
 from leaflet.admin import LeafletGeoAdmin
 from django.contrib import admin
-from . import importedModels
+from .models import *
 
 # Register your models here.
-admin.site.register(importedModels.UtilityPole, LeafletGeoAdmin)
+admin.site.register(UtilityPole, LeafletGeoAdmin)
