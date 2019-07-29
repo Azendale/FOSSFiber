@@ -1,6 +1,7 @@
 # Create your models here.
 
 # Begin inspectdb auto generated section:
+# MANUALLY EDITED!!!!!
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -61,7 +62,7 @@ class CableFiberEnd(models.Model):
 class ConduitType(models.Model):
     id = models.IntegerField(primary_key=True)
     diameter = models.FloatField(blank=True, null=True)
-    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True)
+    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True, related_name='used_as_conduit_diameter')
     length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
     conduit_type_name = models.TextField()
 
@@ -197,8 +198,8 @@ class FiberCableSlackCoilLocatedInUndergroundVault(models.Model):
 class FiberCableStrandAttachment(models.Model):
     id = models.IntegerField(primary_key=True)
     segment_percentage = models.FloatField(blank=True, null=True)
-    strand_attachment_a = models.ForeignKey('StrandAttachment', models.DO_NOTHING)
-    strand_attachment_b = models.ForeignKey('StrandAttachment', models.DO_NOTHING, blank=True, null=True)
+    strand_attachment_a = models.ForeignKey('StrandAttachment', models.DO_NOTHING, related_name='as_FiberCableStrandAttachment_a')
+    strand_attachment_b = models.ForeignKey('StrandAttachment', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberCableStrandAttachment_b')
     fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
 
     class Meta:
@@ -222,10 +223,10 @@ class FiberCableTemplate(models.Model):
 
 class FiberConnection(models.Model):
     id = models.IntegerField(primary_key=True)
-    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
-    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_a_side')
+    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_b_side')
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_fiber_connection_a_side')
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_fiber_connection_b_side')
 
     class Meta:
         managed = False
@@ -234,8 +235,8 @@ class FiberConnection(models.Model):
 
 class FiberConnectionEnclosurePortTemplate(models.Model):
     id = models.IntegerField(primary_key=True)
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_a')
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_b')
 
     class Meta:
         managed = False
@@ -788,9 +789,9 @@ class StrandPoleAttachment(models.Model):
 class StrandToStrandAttachment(models.Model):
     id = models.IntegerField(primary_key=True)
     percentage_along_segment = models.FloatField()
-    segment_strand_attachment_a = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
-    segment_strand_attachment_b = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
+    segment_strand_attachment_a = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_a')
+    segment_strand_attachment_b = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_b')
+    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_baseclass')
 
     class Meta:
         managed = False
@@ -800,8 +801,8 @@ class StrandToStrandAttachment(models.Model):
 class UndergroundConduit(models.Model):
     id = models.IntegerField(primary_key=True)
     length = models.FloatField(blank=True, null=True)
-    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
-    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
+    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_a')
+    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_b')
     conduit_route = models.LineStringField(blank=True, null=True)
     conduit_type = models.ForeignKey(ConduitType, models.DO_NOTHING)
 
