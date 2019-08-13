@@ -1903,9 +1903,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3282" y="213"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1928,9 +1927,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3572" y="0"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1970,9 +1968,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2899" y="277"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -2012,9 +2009,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2945" y="58"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -2050,55 +2046,16 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 		</idxelement>
 </index>
 
-<table name="history_smallint_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+<sequence name="history_smallint_deletion_id_seq" cycle="false" start="1" increment="1" min-value="-2147483648" max-value="2147483647" cache="1">
 	<schema name="public"/>
-	<role name="postgres"/>
-	<position x="2952" y="472"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="history_row_deletion_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="table_name" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="column_name" not-null="true">
-		<type name="text" length="0"/>
-	</column>
-	<column name="change_date" not-null="true" default-value="NOW()">
-		<type name="timestamptz" length="0"/>
-	</column>
-	<column name="username">
-		<type name="text" length="0"/>
-	</column>
-	<column name="before_value">
-		<type name="smallint" length="0"/>
-	</column>
-	<constraint name="history_smallint__deletion_pk" type="pk-constr" table="public.history_smallint_deletion">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-</table>
-
-<index name="history_smallint_deletion_idx_table_column" table="public.history_smallint_deletion"
-	 concurrent="false" unique="false" fast-update="false" buffering="false"
-	 index-type="btree" factor="0">
-		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
-			<column name="table_name"/>
-		</idxelement>
-		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
-			<column name="column_name"/>
-		</idxelement>
-</index>
+</sequence>
 
 <table name="history_bool_deletion" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3688" y="426"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -2138,9 +2095,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3713" y="189"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -2180,9 +2136,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3302" y="460"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="history_row_deletion_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -2208,6 +2163,47 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 </table>
 
 <index name="history_geography_linestring_deletion_idx_table_column" table="public.history_geometry_linestring_deletion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="table_name"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="column_name"/>
+		</idxelement>
+</index>
+
+<table name="history_smallint_deletion" layer="0" collapse-mode="1" max-obj-count="8">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2804" y="501"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="history_row_deletion_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="table_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="column_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="change_date" not-null="true" default-value="NOW()">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="before_value">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="history_smallint__deletion_pk" type="pk-constr" table="public.history_smallint_deletion">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="history_smallint_deletion_idx_table_column" table="public.history_smallint_deletion"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
