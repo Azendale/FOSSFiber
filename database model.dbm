@@ -81,9 +81,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<comment><![CDATA[Should we denormalize and cache a point of where this strand attachment ends up being on the parent strand?]]></comment>
 	<position x="1140" y="20"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="percentage_along_segment" not-null="true">
 		<type name="real" length="0"/>
@@ -135,9 +134,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1660" y="1400"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="longlat">
 		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
@@ -156,10 +154,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="optical_splitter" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2560" y="1400"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<position x="2560" y="1401"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="inputs_count" not-null="true" default-value="1">
 		<type name="smallint" length="0"/>
@@ -186,9 +183,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<comment><![CDATA[Inherited fiber_connection.fiber_end_a_id is considered the in side of the enclosure, inherited fiber_connection.fiber_end_b_id is considered the out side of the enclosure. This is by convention and not enforced by checks.]]></comment>
 	<position x="2160" y="1680"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_enclosure_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -211,9 +207,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3997.14" y="1965.71"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="text" length="0"/>
@@ -245,9 +240,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1220" y="1020"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="cable_start_length_measure">
 		<type name="real" length="0"/>
@@ -280,9 +274,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="60" y="1780"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="unit_name" not-null="true">
 		<type name="text" length="0"/>
@@ -304,9 +297,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="140" y="1220"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="shortname" default-value="'buffer tube'">
 		<type name="text" length="15"/>
@@ -321,9 +313,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<comment><![CDATA[Describes the structure/fiber groupings in a cable. A massive cable with ]]></comment>
 	<position x="460" y="1180"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="subgroup_count" default-value="12">
 		<type name="smallint" length="0"/>
@@ -348,9 +339,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<comment><![CDATA[TODO: should this be one fiber for the whole length of the cable, or multiple rows in this table for when midspans happen in a cable?]]></comment>
 	<position x="2320" y="760"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="cable_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -365,9 +355,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="postgres"/>
 	<comment><![CDATA[Used to store the information about which fiber in a cable. Not columns on the fiber table because of the potential for varying numbers/levels of grouping in a cable. For example, on the huge fiber count cable, you could have multiple "buffer tubes" with multiple ribbons inside, and inside each ribbon multiple fibers.]]></comment>
 	<position x="2920" y="800"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="group_index" default-value="1">
 		<type name="smallint" length="0"/>
@@ -387,9 +376,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1760" y="1040"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_cable_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -413,9 +401,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2240" y="1280"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="type_label" not-null="true">
 		<type name="text" length="0"/>
@@ -439,9 +426,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2240" y="1380"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="style_label" not-null="true">
 		<type name="text" length="0"/>
@@ -462,9 +448,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3000" y="1300"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="power_drop" default-value="NULL">
 		<type name="real" length="0"/>
@@ -491,9 +476,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3000" y="1480"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="power_drop" default-value="NULL">
 		<type name="real" length="0"/>
@@ -520,9 +504,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3540" y="1200"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="optical_connector_type_id">
 		<type name="smallint" length="0"/>
@@ -537,9 +520,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2940" y="1040"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -589,9 +571,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4020" y="1460"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="connected_fiber_end_a_id">
 		<type name="integer" length="0"/>
@@ -644,9 +625,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="4002.86" y="1042.86"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_connection_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -669,9 +649,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="80" y="1380"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="latlong" not-null="true">
 		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
@@ -703,9 +682,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="560" y="1560"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="length">
 		<type name="real" length="0"/>
@@ -731,9 +709,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1060" y="1260"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="underground_vault_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -750,9 +727,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1060" y="1400"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_enclosure_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -788,7 +764,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Tracks specialization/inheritance of fiber_connections and what tables should be checked/joined for references. Putting an entry in this table means that a inner join between fiber_connection.id and {inheriting_table_name}.{inheriting_table_fk_column_name) should return a result.]]></comment>
-	<position x="4020" y="1600"/>
+	<position x="4027" y="1596"/>
 	<column name="fiber_connection_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
@@ -807,9 +783,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2280" y="940"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_cable_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -844,10 +819,9 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="fiber_cable_strand_attachment" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1320" y="540"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<position x="1319" y="541"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="segment_percentage" default-value=".5">
 		<type name="real" length="0"/>
@@ -878,9 +852,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1220" y="240"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="pole_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -933,9 +906,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1320" y="880"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="building_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -992,9 +964,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1320" y="400"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_cable_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1010,10 +981,9 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="fiber_cable_building_attachment" layer="0" collapse-mode="1" max-obj-count="3">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1320" y="720"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<position x="1320" y="721"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="building_attachment_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1061,9 +1031,8 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="500" y="940"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="building_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1244,9 +1213,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<role name="postgres"/>
 	<comment><![CDATA[Template with predefined values for fiber_enclosures and related tables.]]></comment>
 	<position x="1651" y="1573"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="manufacturer_name">
 		<type name="text" length="0"/>
@@ -1271,9 +1239,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<role name="postgres"/>
 	<comment><![CDATA[Inherited fiber_connection.fiber_end_a_id is considered the in side of the enclosure, inherited fiber_connection.fiber_end_b_id is considered the out side of the enclosure. This is by convention and not enforced by checks.]]></comment>
 	<position x="1652" y="1755"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="fiber_enclosure_template_id" not-null="true">
 		<type name="integer" length="0"/>
@@ -1311,9 +1278,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1649" y="1944"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="a_optical_connector_type_id">
 		<type name="smallint" length="0"/>
@@ -1347,9 +1313,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<comment><![CDATA[Template with predefined values for fiber_cables and related tables.
 ]]></comment>
 	<position x="1743" y="719"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="length_units" default-value="1">
 		<type name="smallint" length="0"/>
@@ -1380,9 +1345,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<role name="postgres"/>
 	<comment><![CDATA[Describes the structure/fiber groupings in a cable. A massive cable with ]]></comment>
 	<position x="1757" y="495"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="smallint" length="0"/>
+	<column name="id" not-null="true">
+		<type name="smallserial" length="0"/>
 	</column>
 	<column name="subgroup_count" default-value="12">
 		<type name="smallint" length="0"/>
@@ -1407,9 +1371,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<role name="postgres"/>
 	<comment><![CDATA[Template with predefined values for optical_splitters and related tables.]]></comment>
 	<position x="2632.86" y="1815.24"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="inputs_count" not-null="true" default-value="1">
 		<type name="smallint" length="0"/>
@@ -1435,9 +1398,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3004.53" y="1690.47"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="power_drop" default-value="NULL">
 		<type name="real" length="0"/>
@@ -1464,9 +1426,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3010.71" y="1848.33"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="power_drop" default-value="NULL">
 		<type name="real" length="0"/>
@@ -1493,9 +1454,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="3480.71" y="1824.76"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="optical_connector_type_id">
 		<type name="smallint" length="0"/>
@@ -1511,9 +1471,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<role name="postgres"/>
 	<comment><![CDATA[Template with predefined values for underground_vaults and related tables.]]></comment>
 	<position x="46.6667" y="1945"/>
-	<column name="id" not-null="true"
-	 identity-type="BY DEFAULT">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="depth">
 		<type name="real" length="0"/>
@@ -1545,9 +1504,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="113.333" y="1616.67"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="diameter">
 		<type name="real" length="0"/>
@@ -1570,9 +1528,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1712" y="5"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1615,9 +1572,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1713" y="179"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1660,9 +1616,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1953" y="6"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1704,10 +1659,9 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <table name="history_smallint" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1954" y="180"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<position x="1954" y="183"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1750,9 +1704,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2491" y="6"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1795,9 +1748,8 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2184" y="6"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
@@ -1839,10 +1791,9 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <table name="history_geometry_linestring" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2183" y="181"/>
-	<column name="id" not-null="true"
-	 identity-type="ALWAYS">
-		<type name="integer" length="0"/>
+	<position x="2184" y="182"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
 	</column>
 	<column name="table_name" not-null="true">
 		<type name="text" length="0"/>
