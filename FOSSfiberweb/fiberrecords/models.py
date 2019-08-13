@@ -747,8 +747,8 @@ class StrandToStrandAttachment(models.Model):
 
 class UndergroundConduit(models.Model):
     length = models.FloatField(blank=True, null=True)
-    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, null=True, related_name='as_UndergroundConduit_entry_a')
-    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, null=True, related_name='as_UndergroundConduit_entry_b')
+    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_a')
+    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_b')
     conduit_route = models.LineStringField(blank=True, null=True)
     conduit_type = models.ForeignKey(ConduitType, models.DO_NOTHING)
 
