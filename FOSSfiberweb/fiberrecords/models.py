@@ -13,7 +13,6 @@ from django.contrib.gis.db import models
 
 
 class Building(models.Model):
-    id = models.IntegerField(primary_key=True)
     address_number = models.TextField(blank=True, null=True)
     street = models.TextField(blank=True, null=True)
     city = models.TextField(blank=True, null=True)
@@ -27,7 +26,6 @@ class Building(models.Model):
 
 
 class BuildingAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     building = models.ForeignKey(Building, models.DO_NOTHING)
     attachment_point = models.PointField()
 
@@ -48,7 +46,6 @@ class BuildingAttachmentMetaInstance(models.Model):
 
 
 class CableFiberEnd(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber = models.ForeignKey('Fiber', models.DO_NOTHING)
     start_end = models.BooleanField()
     fiber_end = models.ForeignKey('FiberEnd', models.DO_NOTHING, unique=True)
@@ -60,10 +57,9 @@ class CableFiberEnd(models.Model):
 
 
 class ConduitType(models.Model):
-    id = models.IntegerField(primary_key=True)
     diameter = models.FloatField(blank=True, null=True)
     diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True, related_name='used_as_conduit_diameter')
-    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
+    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True, related_name='used_as_conduit_length')
     conduit_type_name = models.TextField()
 
     class Meta:
@@ -72,7 +68,6 @@ class ConduitType(models.Model):
 
 
 class EnclosurePort(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_enclosure = models.ForeignKey('FiberEnclosure', models.DO_NOTHING)
     port_label = models.TextField(blank=True, null=True)
     fiber_connection = models.ForeignKey('FiberConnection', models.DO_NOTHING, unique=True)
@@ -83,7 +78,6 @@ class EnclosurePort(models.Model):
 
 
 class EnclosurePortTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_enclosure_template = models.ForeignKey('FiberEnclosureTemplate', models.DO_NOTHING)
     port_label = models.TextField(blank=True, null=True)
     fiber_connection_template = models.ForeignKey('FiberConnectionEnclosurePortTemplate', models.DO_NOTHING, unique=True)
@@ -94,7 +88,6 @@ class EnclosurePortTemplate(models.Model):
 
 
 class Fiber(models.Model):
-    id = models.IntegerField(primary_key=True)
     cable = models.ForeignKey('FiberCable', models.DO_NOTHING)
 
     class Meta:
@@ -103,7 +96,6 @@ class Fiber(models.Model):
 
 
 class FiberCable(models.Model):
-    id = models.IntegerField(primary_key=True)
     cable_start_length_measure = models.FloatField(blank=True, null=True)
     cable_end_length_measure = models.FloatField(blank=True, null=True)
     length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
@@ -118,7 +110,6 @@ class FiberCable(models.Model):
 
 
 class FiberCableAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_cable_meterage = models.FloatField()
     fiber_cable_meterage_is_guess = models.BooleanField()
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
@@ -140,7 +131,6 @@ class FiberCableAttachmentMetaInstanceInheritance(models.Model):
 
 
 class FiberCableBuildingAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
     fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
 
@@ -150,7 +140,6 @@ class FiberCableBuildingAttachment(models.Model):
 
 
 class FiberCableLocatedInFiberEnclosure(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
     fiber_enclosure = models.ForeignKey('FiberEnclosure', models.DO_NOTHING)
     cable_entry_in_meterage = models.FloatField(blank=True, null=True)
@@ -164,7 +153,6 @@ class FiberCableLocatedInFiberEnclosure(models.Model):
 
 
 class FiberCablePoleAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
     pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING)
 
@@ -174,7 +162,6 @@ class FiberCablePoleAttachment(models.Model):
 
 
 class FiberCableSlackCoil(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
     in_meterage = models.FloatField(blank=True, null=True)
     latlong = models.PointField(geography=True, blank=True, null=True)
@@ -186,7 +173,6 @@ class FiberCableSlackCoil(models.Model):
 
 
 class FiberCableSlackCoilLocatedInUndergroundVault(models.Model):
-    id = models.IntegerField(primary_key=True)
     underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING)
     fiber_cable_slack_loop = models.ForeignKey(FiberCableSlackCoil, models.DO_NOTHING)
 
@@ -196,7 +182,6 @@ class FiberCableSlackCoilLocatedInUndergroundVault(models.Model):
 
 
 class FiberCableStrandAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     segment_percentage = models.FloatField(blank=True, null=True)
     strand_attachment_a = models.ForeignKey('StrandAttachment', models.DO_NOTHING, related_name='as_FiberCableStrandAttachment_a')
     strand_attachment_b = models.ForeignKey('StrandAttachment', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberCableStrandAttachment_b')
@@ -208,7 +193,6 @@ class FiberCableStrandAttachment(models.Model):
 
 
 class FiberCableTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
     fiber_groups_depth = models.SmallIntegerField(blank=True, null=True)
     f_armored = models.BooleanField(blank=True, null=True)
@@ -222,7 +206,6 @@ class FiberCableTemplate(models.Model):
 
 
 class FiberConnection(models.Model):
-    id = models.IntegerField(primary_key=True)
     connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_a_side')
     connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_b_side')
     a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_fiber_connection_a_side')
@@ -234,7 +217,6 @@ class FiberConnection(models.Model):
 
 
 class FiberConnectionEnclosurePortTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_a')
     b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_b')
 
@@ -255,7 +237,6 @@ class FiberConnectionMetaInstanceInheritance(models.Model):
 
 
 class FiberEnclosure(models.Model):
-    id = models.IntegerField(primary_key=True)
     longlat = models.PointField(geography=True, blank=True, null=True)
     manufacturer_name = models.TextField(blank=True, null=True)
     enclosure_model = models.TextField(blank=True, null=True)
@@ -266,7 +247,6 @@ class FiberEnclosure(models.Model):
 
 
 class FiberEnclosureLocatedInUndergroundVault(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING)
     underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING)
 
@@ -276,7 +256,6 @@ class FiberEnclosureLocatedInUndergroundVault(models.Model):
 
 
 class FiberEnclosureTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     manufacturer_name = models.TextField(blank=True, null=True)
     enclosure_model = models.TextField(blank=True, null=True)
     template_name = models.TextField()
@@ -287,7 +266,6 @@ class FiberEnclosureTemplate(models.Model):
 
 
 class FiberEnd(models.Model):
-    id = models.IntegerField(primary_key=True)
     optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
@@ -340,7 +318,6 @@ class FiberGroupTypes(models.Model):
 
 
 class FiberIdentifierIndex(models.Model):
-    id = models.IntegerField(primary_key=True)
     group_index = models.SmallIntegerField(blank=True, null=True)
     group_level = models.SmallIntegerField(blank=True, null=True)
     fiber = models.ForeignKey(Fiber, models.DO_NOTHING)
@@ -351,7 +328,6 @@ class FiberIdentifierIndex(models.Model):
 
 
 class FiberSplice(models.Model):
-    id = models.IntegerField(primary_key=True)
     fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING, unique=True)
     fusion = models.BooleanField(blank=True, null=True)
     estimated_loss = models.FloatField(blank=True, null=True)
@@ -362,7 +338,6 @@ class FiberSplice(models.Model):
 
 
 class HistoryBool(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -376,7 +351,6 @@ class HistoryBool(models.Model):
 
 
 class HistoryBoolDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -390,7 +364,6 @@ class HistoryBoolDeletion(models.Model):
 
 
 class HistoryGeometryLinestring(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -404,7 +377,6 @@ class HistoryGeometryLinestring(models.Model):
 
 
 class HistoryGeometryLinestringDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -418,7 +390,6 @@ class HistoryGeometryLinestringDeletion(models.Model):
 
 
 class HistoryGeometryPoint(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -432,7 +403,6 @@ class HistoryGeometryPoint(models.Model):
 
 
 class HistoryGeometryPointDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -446,7 +416,6 @@ class HistoryGeometryPointDeletion(models.Model):
 
 
 class HistoryInteger(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -460,7 +429,6 @@ class HistoryInteger(models.Model):
 
 
 class HistoryIntegerDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -474,7 +442,6 @@ class HistoryIntegerDeletion(models.Model):
 
 
 class HistoryReal(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -488,7 +455,6 @@ class HistoryReal(models.Model):
 
 
 class HistoryRealDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -513,7 +479,6 @@ class HistoryRowCreation(models.Model):
 
 
 class HistoryRowDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     table_id = models.IntegerField()
     username = models.TextField(blank=True, null=True)
@@ -525,7 +490,6 @@ class HistoryRowDeletion(models.Model):
 
 
 class HistorySmallint(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -539,7 +503,6 @@ class HistorySmallint(models.Model):
 
 
 class HistorySmallintDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -553,7 +516,6 @@ class HistorySmallintDeletion(models.Model):
 
 
 class HistoryText(models.Model):
-    id = models.IntegerField(primary_key=True)
     table_name = models.TextField()
     column_name = models.TextField()
     change_date = models.DateTimeField()
@@ -567,7 +529,6 @@ class HistoryText(models.Model):
 
 
 class HistoryTextDeletion(models.Model):
-    id = models.IntegerField(primary_key=True)
     history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
     table_name = models.TextField()
     column_name = models.TextField()
@@ -601,7 +562,6 @@ class OpticalConnectorTypes(models.Model):
 
 
 class OpticalSplitter(models.Model):
-    id = models.IntegerField(primary_key=True)
     inputs_count = models.SmallIntegerField()
     outputs_count = models.SmallIntegerField(blank=True, null=True)
     splitter_type = models.ForeignKey('OpticalSplitterTypes', models.DO_NOTHING, blank=True, null=True)
@@ -614,7 +574,6 @@ class OpticalSplitter(models.Model):
 
 
 class OpticalSplitterInput(models.Model):
-    id = models.IntegerField(primary_key=True)
     power_drop = models.FloatField(blank=True, null=True)
     input_label = models.TextField(blank=True, null=True)
     optical_splitter = models.ForeignKey(OpticalSplitter, models.DO_NOTHING)
@@ -626,7 +585,6 @@ class OpticalSplitterInput(models.Model):
 
 
 class OpticalSplitterInputTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     power_drop = models.FloatField(blank=True, null=True)
     input_label = models.TextField(blank=True, null=True)
     optical_splitter_template = models.ForeignKey('OpticalSplitterTemplate', models.DO_NOTHING)
@@ -638,7 +596,6 @@ class OpticalSplitterInputTemplate(models.Model):
 
 
 class OpticalSplitterOutput(models.Model):
-    id = models.IntegerField(primary_key=True)
     power_drop = models.FloatField(blank=True, null=True)
     output_label = models.TextField(blank=True, null=True)
     optical_splitter = models.ForeignKey(OpticalSplitter, models.DO_NOTHING)
@@ -650,7 +607,6 @@ class OpticalSplitterOutput(models.Model):
 
 
 class OpticalSplitterOutputTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     power_drop = models.FloatField(blank=True, null=True)
     output_label = models.TextField(blank=True, null=True)
     optical_splitter = models.ForeignKey('OpticalSplitterTemplate', models.DO_NOTHING)
@@ -671,7 +627,6 @@ class OpticalSplitterStyles(models.Model):
 
 
 class OpticalSplitterTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     inputs_count = models.SmallIntegerField()
     outputs_count = models.SmallIntegerField(blank=True, null=True)
     splitter_type = models.ForeignKey('OpticalSplitterTypes', models.DO_NOTHING, blank=True, null=True)
@@ -684,7 +639,6 @@ class OpticalSplitterTemplate(models.Model):
 
 
 class OpticalSplitterTemplateFiberEnd(models.Model):
-    id = models.IntegerField(primary_key=True)
     optical_connector_type = models.ForeignKey(OpticalConnectorTypes, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
@@ -703,7 +657,6 @@ class OpticalSplitterTypes(models.Model):
 
 
 class PoleAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     height_meters = models.FloatField(blank=True, null=True)
     utility_pole = models.ForeignKey('UtilityPole', models.DO_NOTHING)
     f_permitting_requested = models.BooleanField(blank=True, null=True)
@@ -727,7 +680,6 @@ class PoleAttachmentMetaInstanceInheritance(models.Model):
 
 
 class StrandAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING)
     strand_line_squence = models.FloatField(blank=True, null=True)
 
@@ -748,7 +700,6 @@ class StrandAttachmentMetaInstanceInheritance(models.Model):
 
 
 class StrandBuildingAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
     strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
 
@@ -758,7 +709,6 @@ class StrandBuildingAttachment(models.Model):
 
 
 class StrandGuyWire(models.Model):
-    id = models.IntegerField(primary_key=True)
     sidewalk_standoff_pipe = models.BooleanField(blank=True, null=True)
     pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
     azimuth_from_pole = models.SmallIntegerField(blank=True, null=True)
@@ -769,7 +719,6 @@ class StrandGuyWire(models.Model):
 
 
 class StrandLine(models.Model):
-    id = models.IntegerField(primary_key=True)
 
     class Meta:
         managed = False
@@ -777,7 +726,6 @@ class StrandLine(models.Model):
 
 
 class StrandPoleAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
     strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
 
@@ -787,7 +735,6 @@ class StrandPoleAttachment(models.Model):
 
 
 class StrandToStrandAttachment(models.Model):
-    id = models.IntegerField(primary_key=True)
     percentage_along_segment = models.FloatField()
     segment_strand_attachment_a = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_a')
     segment_strand_attachment_b = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_b')
@@ -799,10 +746,9 @@ class StrandToStrandAttachment(models.Model):
 
 
 class UndergroundConduit(models.Model):
-    id = models.IntegerField(primary_key=True)
     length = models.FloatField(blank=True, null=True)
-    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_a')
-    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_b')
+    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, null=True, related_name='as_UndergroundConduit_entry_a')
+    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, null=True, related_name='as_UndergroundConduit_entry_b')
     conduit_route = models.LineStringField(blank=True, null=True)
     conduit_type = models.ForeignKey(ConduitType, models.DO_NOTHING)
 
@@ -812,7 +758,6 @@ class UndergroundConduit(models.Model):
 
 
 class UndergroundVault(models.Model):
-    id = models.IntegerField(primary_key=True)
     latlong = models.PointField()
     depth = models.FloatField(blank=True, null=True)
     width = models.FloatField(blank=True, null=True)
@@ -827,7 +772,6 @@ class UndergroundVault(models.Model):
 
 
 class UndergroundVaultTemplate(models.Model):
-    id = models.IntegerField(primary_key=True)
     depth = models.FloatField(blank=True, null=True)
     width = models.FloatField(blank=True, null=True)
     length = models.FloatField(blank=True, null=True)
@@ -842,7 +786,6 @@ class UndergroundVaultTemplate(models.Model):
 
 
 class UtilityPole(models.Model):
-    id = models.IntegerField(primary_key=True)
     pole_owner = models.TextField(blank=True, null=True)
     pole_owner_primary_label = models.TextField(blank=True, null=True)
     latlong = models.PointField()
