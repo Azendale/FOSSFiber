@@ -31,6 +31,8 @@ def get_non_vcs_setting(setting, non_vcs_settings=non_vcs_settings):
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+SILENCED_SYSTEM_CHECKS = ['fields.W342']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_non_vcs_setting('DEBUG')
 
