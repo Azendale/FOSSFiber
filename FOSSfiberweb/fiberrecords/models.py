@@ -352,10 +352,7 @@ class HistoryBool(models.Model):
 
 class HistoryBoolDeletion(models.Model):
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.BooleanField(blank=True, null=True)
 
     class Meta:
@@ -378,10 +375,7 @@ class HistoryGeometryLinestring(models.Model):
 
 class HistoryGeometryLinestringDeletion(models.Model):
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.LineStringField(blank=True, null=True)
 
     class Meta:
@@ -404,10 +398,7 @@ class HistoryGeometryPoint(models.Model):
 
 class HistoryGeometryPointDeletion(models.Model):
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.PointField(blank=True, null=True)
 
     class Meta:
@@ -430,10 +421,7 @@ class HistoryInteger(models.Model):
 
 class HistoryIntegerDeletion(models.Model):
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -456,10 +444,7 @@ class HistoryReal(models.Model):
 
 class HistoryRealDeletion(models.Model):
     history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.FloatField(blank=True, null=True)
 
     class Meta:
@@ -480,7 +465,7 @@ class HistoryRowCreation(models.Model):
 
 class HistoryRowDeletion(models.Model):
     table_name = models.TextField()
-    table_id = models.IntegerField()
+    table_row_id = models.IntegerField()
     username = models.TextField(blank=True, null=True)
     deletion = models.DateTimeField()
 
@@ -504,10 +489,7 @@ class HistorySmallint(models.Model):
 
 class HistorySmallintDeletion(models.Model):
     history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
@@ -530,10 +512,7 @@ class HistoryText(models.Model):
 
 class HistoryTextDeletion(models.Model):
     history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
-    table_name = models.TextField()
     column_name = models.TextField()
-    change_date = models.DateTimeField()
-    username = models.TextField(blank=True, null=True)
     before_value = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -793,6 +772,3 @@ class UtilityPole(models.Model):
     class Meta:
         managed = False
         db_table = 'utility_pole'
-
-# End inspectdb auto generated section
-
