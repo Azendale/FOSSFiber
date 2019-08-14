@@ -2156,7 +2156,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 		<type name="integer" length="0"/>
 	</column>
 	<column name="building_location" not-null="true">
-		<type name="geometry" length="0"/>
+		<type name="geometry" length="0" spatial-type="GEOMETRY" variation="0" srid="4326"/>
 	</column>
 	<column name="ext_tb_location_id">
 		<type name="integer" length="0"/>
