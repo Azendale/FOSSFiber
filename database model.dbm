@@ -2117,12 +2117,15 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<column name="fiber_enclosure_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
+	<constraint name="fiber_enclosure_coverage_pk" type="pk-constr" table="public.fiber_enclosure_coverage">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
 <table name="service_address" layer="0" collapse-mode="1" max-obj-count="10">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1066" y="1801"/>
+	<position x="1065" y="1801"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
