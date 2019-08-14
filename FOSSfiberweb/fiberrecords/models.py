@@ -131,8 +131,8 @@ class FiberCableAttachmentMetaInstanceInheritance(models.Model):
 
 
 class FiberCableBuildingAttachment(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
+    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING, unique=True)
+    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
 
     class Meta:
         managed = False
@@ -153,8 +153,8 @@ class FiberCableLocatedInFiberEnclosure(models.Model):
 
 
 class FiberCablePoleAttachment(models.Model):
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
-    pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING)
+    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
+    pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING, unique=True)
 
     class Meta:
         managed = False
@@ -185,7 +185,7 @@ class FiberCableStrandAttachment(models.Model):
     segment_percentage = models.FloatField(blank=True, null=True)
     strand_attachment_a = models.ForeignKey('StrandAttachment', models.DO_NOTHING, related_name='as_FiberCableStrandAttachment_a')
     strand_attachment_b = models.ForeignKey('StrandAttachment', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberCableStrandAttachment_b')
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
+    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
 
     class Meta:
         managed = False
@@ -700,8 +700,8 @@ class StrandAttachmentMetaInstanceInheritance(models.Model):
 
 
 class StrandBuildingAttachment(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
+    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING, unique=True)
+    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True)
 
     class Meta:
         managed = False
@@ -726,8 +726,8 @@ class StrandLine(models.Model):
 
 
 class StrandPoleAttachment(models.Model):
-    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
+    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING, unique=True)
+    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True)
 
     class Meta:
         managed = False
@@ -738,7 +738,7 @@ class StrandToStrandAttachment(models.Model):
     percentage_along_segment = models.FloatField()
     segment_strand_attachment_a = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_a')
     segment_strand_attachment_b = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_b')
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_baseclass')
+    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True, related_name='as_StrandToStrandAttachment_baseclass')
 
     class Meta:
         managed = False
