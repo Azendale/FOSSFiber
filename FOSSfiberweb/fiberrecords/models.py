@@ -35,7 +35,7 @@ class BuildingAttachment(models.Model):
 
 
 class BuildingAttachmentMetaInstance(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING, primary_key=True)
+    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_cable_fk_column_name = models.TextField()
 
@@ -120,7 +120,7 @@ class FiberCableAttachment(models.Model):
 
 
 class FiberCableAttachmentMetaInstanceInheritance(models.Model):
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, primary_key=True)
+    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -226,7 +226,7 @@ class FiberConnectionEnclosurePortTemplate(models.Model):
 
 
 class FiberConnectionMetaInstanceInheritance(models.Model):
-    fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING, primary_key=True)
+    fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -274,7 +274,7 @@ class FiberEnd(models.Model):
 
 
 class FiberEndMetaInstanceInheritance(models.Model):
-    fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING, primary_key=True)
+    fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -669,7 +669,7 @@ class PoleAttachment(models.Model):
 
 
 class PoleAttachmentMetaInstanceInheritance(models.Model):
-    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING, primary_key=True)
+    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -689,7 +689,7 @@ class StrandAttachment(models.Model):
 
 
 class StrandAttachmentMetaInstanceInheritance(models.Model):
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, primary_key=True)
+    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
