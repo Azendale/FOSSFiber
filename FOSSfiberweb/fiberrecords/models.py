@@ -675,7 +675,7 @@ class ServiceAddress(models.Model):
     road_type_abbreviation = models.TextField(blank=True, null=True)
     city = models.TextField(blank=True, null=True)
     zip_code = models.IntegerField(blank=True, null=True)
-    building_location = models.GeometryField(srid=0)
+    building_location = models.GeometryField()
     ext_tb_location_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
