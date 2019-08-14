@@ -73,7 +73,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="strand_to_strand_attachment" layer="0" collapse-mode="1" max-obj-count="6">
+<table name="strand_to_strand_attachment" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Should we denormalize and cache a point of where this strand attachment ends up being on the parent strand?]]></comment>
@@ -99,6 +99,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 	<constraint name="percentage_along_segment_must_be_between_0_and_1" type="ck-constr" table="public.strand_to_strand_attachment">
 			<expression><![CDATA[percentage_along_segment >= 0 and percentage_along_segment <= 1]]></expression>
+	</constraint>
+	<constraint name="strand_to_strand_attachment_unique_strand_attachment_base" type="uq-constr" table="public.strand_to_strand_attachment">
+		<columns names="strand_attachment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -811,7 +814,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="fiber_cable_strand_attachment" layer="0" collapse-mode="1" max-obj-count="7">
+<table name="fiber_cable_strand_attachment" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1319" y="541"/>
@@ -841,9 +844,12 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<constraint name="segment_percentage_null_when_strand_attachment_b_is_null" type="ck-constr" table="public.fiber_cable_strand_attachment">
 			<expression><![CDATA[(strand_attachment_b_id IS NULL and segment_percentage is NULL) or (strand_attachment_b_id IS NOT NULL and segment_percentage IS NOT NULL)]]></expression>
 	</constraint>
+	<constraint name="fiber_cable_strand_attachment_unique_fiber_cable_attach_base" type="uq-constr" table="public.fiber_cable_strand_attachment">
+		<columns names="fiber_cable_attachment_id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
-<table name="strand_pole_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="strand_pole_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1220" y="240"/>
@@ -858,6 +864,12 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<constraint name="strand_pole_attachment_pk" type="pk-constr" table="public.strand_pole_attachment">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="strand_pole_attachment_unique_pole_attachment_base" type="uq-constr" table="public.strand_pole_attachment">
+		<columns names="pole_attachment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="strand_pole_attachment_unique_strand_attachment_base" type="uq-constr" table="public.strand_pole_attachment">
+		<columns names="strand_attachment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -897,7 +909,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="strand_building_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="strand_building_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1320" y="880"/>
@@ -912,6 +924,12 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<constraint name="strand_building_attachment_pk" type="pk-constr" table="public.strand_building_attachment">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="strand_building_attachment_unique_building_attachment_base" type="uq-constr" table="public.strand_building_attachment">
+		<columns names="building_attachment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="strand_building_attachment_unique_strand_attachment_base" type="uq-constr" table="public.strand_building_attachment">
+		<columns names="strand_attachment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -954,7 +972,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="fiber_cable_pole_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="fiber_cable_pole_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1320" y="400"/>
@@ -970,9 +988,15 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<constraint name="fiber_cable_pole_attachment_pk" type="pk-constr" table="public.fiber_cable_pole_attachment">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="fiber_cable_pole_attachment_unique_fiber_cable_attachment_base" type="uq-constr" table="public.fiber_cable_pole_attachment">
+		<columns names="fiber_cable_attachment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fiber_cable_pole_attachment_unique_pole_attachment_base" type="uq-constr" table="public.fiber_cable_pole_attachment">
+		<columns names="pole_attachment_id" ref-type="src-columns"/>
+	</constraint>
 </table>
 
-<table name="fiber_cable_building_attachment" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="fiber_cable_building_attachment" layer="0" collapse-mode="1" max-obj-count="6">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1320" y="721"/>
@@ -987,6 +1011,12 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<constraint name="fiber_cable_building_attachment_pk" type="pk-constr" table="public.fiber_cable_building_attachment">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fiber_cable_building_attachment_unique_fiber_cable_attach_base" type="uq-constr" table="public.fiber_cable_building_attachment">
+		<columns names="fiber_cable_attachment_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fiber_cable_building_attachment_unique_building_attachment_base" type="uq-constr" table="public.fiber_cable_building_attachment">
+		<columns names="building_attachment_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -2626,12 +2656,6 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="history_smallint_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_smallint_deletion">
-	<columns names="history_row_deletion_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="history_bool_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_bool_deletion">
 	<columns names="history_row_deletion_id" ref-type="src-columns"/>
@@ -2646,6 +2670,12 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 
 <constraint name="history_geography_linestring_deletion_needs_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_geometry_linestring_deletion">
+	<columns names="history_row_deletion_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="history_smallint_deletion_belongs_to_history_row_deletion" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.history_row_deletion" table="public.history_smallint_deletion">
 	<columns names="history_row_deletion_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
