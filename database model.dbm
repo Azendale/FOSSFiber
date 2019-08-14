@@ -2122,7 +2122,7 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	</constraint>
 </table>
 
-<table name="service_address" layer="0" collapse-mode="1" max-obj-count="10">
+<table name="service_address" layer="0" collapse-mode="1" max-obj-count="12">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1065" y="1801"/>
@@ -2140,6 +2140,10 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	<column name="street_direction">
 		<type name="text" length="0"/>
 		<comment><![CDATA[E (for east) in an address like "10302 1/2 E. Plum St"]]></comment>
+	</column>
+	<column name="street_name">
+		<type name="text" length="0"/>
+		<comment><![CDATA["Plum" in an address like "10302 1/2 E. Plum St"]]></comment>
 	</column>
 	<column name="road_type_abbreviation">
 		<type name="text" length="0"/>
