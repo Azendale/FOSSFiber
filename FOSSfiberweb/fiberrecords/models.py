@@ -671,6 +671,7 @@ class ServiceAddress(models.Model):
     address_number = models.IntegerField(blank=True, null=True)
     address_number_fraction = models.TextField(blank=True, null=True)
     street_direction = models.TextField(blank=True, null=True)
+    street_name = models.TextField(blank=True, null=True)
     road_type_abbreviation = models.TextField(blank=True, null=True)
     city = models.TextField(blank=True, null=True)
     zip_code = models.IntegerField(blank=True, null=True)
