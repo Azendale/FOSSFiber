@@ -242,6 +242,15 @@ class FiberEnclosure(models.Model):
         db_table = 'fiber_enclosure'
 
 
+class FiberEnclosureCoverage(models.Model):
+    coverage_area = models.PolygonField()
+    fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'fiber_enclosure_coverage'
+
+
 class FiberEnclosureLocatedInUndergroundVault(models.Model):
     fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING)
     underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING)
@@ -652,6 +661,21 @@ class PoleAttachmentMetaInstanceInheritance(models.Model):
         managed = False
         db_table = 'pole_attachment_meta_instance_inheritance'
         unique_together = (('pole_attachment', 'inheriting_table_name', 'inheriting_table_fk_column_name'),)
+
+
+class ServiceAddress(models.Model):
+    address_number = models.IntegerField(blank=True, null=True)
+    address_number_fraction = models.TextField(blank=True, null=True)
+    street_direction = models.TextField(blank=True, null=True)
+    road_type_abbreviation = models.TextField(blank=True, null=True)
+    city = models.TextField(blank=True, null=True)
+    zip_code = models.IntegerField(blank=True, null=True)
+    building_location = models.GeometryField(srid=0)
+    ext_tb_location_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'service_address'
 
 
 class StrandAttachment(models.Model):
