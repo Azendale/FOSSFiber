@@ -535,6 +535,16 @@ class LengthUnits(models.Model):
         db_table = 'length_units'
 
 
+class MapBookmark(models.Model):
+    map_center = models.PointField()
+    zoom_level = models.IntegerField(blank=True, null=True)
+    bookmark_name = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'map_bookmark'
+
+
 class OpticalConnectorTypes(models.Model):
     id = models.SmallIntegerField(primary_key=True)
     name = models.TextField()
