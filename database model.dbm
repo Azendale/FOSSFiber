@@ -2166,6 +2166,27 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 	</constraint>
 </table>
 
+<table name="map_bookmark" layer="0" collapse-mode="1" max-obj-count="4">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2230" y="444"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="map_center" not-null="true">
+		<type name="geometry" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<column name="zoom_level">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="bookmark_name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="map_bookmark_pk" type="pk-constr" table="public.map_bookmark">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
 	<columns names="utility_pole_id" ref-type="src-columns"/>
@@ -2672,7 +2693,11 @@ inner join building_attachment on fiber_cable_building_attachment.building_attac
 <relationship name="rel_strand_attachment_strand_line" type="relfk" layer="0"
 	 src-table="public.strand_attachment"
 	 dst-table="public.strand_line" reference-fk="ref_strand_line"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="rel_strand_to_strand_attachment_strand_attachment" type="relfk" layer="0"
 	 src-table="public.strand_to_strand_attachment"
