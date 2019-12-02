@@ -498,16 +498,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="fiber_id" not-null="true">
 		<type name="integer" length="0"/>
 	</column>
-	<column name="start_end" not-null="true">
-		<type name="bool" length="0"/>
-		<comment><![CDATA[If true, then going from the end down the fiber, cable meterage will be ascending. If false, it will be decending.]]></comment>
-	</column>
 	<column name="fiber_end_id" not-null="true">
 		<type name="integer" length="0"/>
-	</column>
-	<column name="meterage" not-null="true">
-		<type name="real" length="0"/>
-		<comment><![CDATA[Where this end of the fiber falls, in measurement units of meters on the cable jacket.]]></comment>
 	</column>
 	<constraint name="cable_fiber_end?_pk" type="pk-constr" table="public.cable_fiber_end">
 		<columns names="id" ref-type="src-columns"/>
@@ -515,6 +507,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="cable_fiber_end_uniquely_owns_inherited_fiber_end" type="uq-constr" table="public.cable_fiber_end">
 		<columns names="fiber_end_id" ref-type="src-columns"/>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="fiber_cable_segment_end_id" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fiber_cable_segment_end_fk" index="4"/>
+	</customidxs>
 </table>
 
 <table name="utility_pole" layer="0" collapse-mode="1" max-obj-count="4">
@@ -757,7 +757,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="fiber_cable_located_in_fiber_enclosure" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="fiber_cable_located_in_fiber_enclosure" layer="0" collapse-mode="1" max-obj-count="9">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="2280" y="940"/>
@@ -910,7 +910,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<role name="postgres"/>
 	<comment><![CDATA[Template with predefined values for fiber_cables and related tables.
 ]]></comment>
-	<position x="1743" y="719"/>
+	<position x="1661" y="662"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -1936,6 +1936,74 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 dst-table="public.address"
 	 src-required="false" dst-required="false"
 	 table-name="many_building_has_many_address"/>
+
+<table name="fiber_cable_segment" layer="0" collapse-mode="1" max-obj-count="2">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2319" y="648"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<constraint name="fiber_cable_segment_pk" type="pk-constr" table="public.fiber_cable_segment">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="fiber_cable_has_many_fiber_cable_segment" type="rel1n" layer="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.fiber_cable"
+	 dst-table="public.fiber_cable_segment"
+	 src-required="true" dst-required="false"/>
+
+<table name="fiber_cable_segment_end" layer="0" collapse-mode="1" max-obj-count="3">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2735" y="638"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="start_end">
+		<type name="bool" length="0"/>
+		<comment><![CDATA[If true, then going from the end down the fiber cable, cable meterage will be ascending. If false, it will be decending.]]></comment>
+	</column>
+	<constraint name="fiber_cable_segment_end_pk" type="pk-constr" table="public.fiber_cable_segment_end">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="fiber_cable_segment_id" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="fiber_cable_segment_fk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="fiber_cable_segment_has_many_fiber_cable_end" type="rel1n" layer="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.fiber_cable_segment"
+	 dst-table="public.fiber_cable_segment_end"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="fiber_cable_segment_end_has_many_cable_fiber_end" type="rel1n" layer="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.fiber_cable_segment_end"
+	 dst-table="public.cable_fiber_end"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="fiber_cable_located_in_fiber_enclosure_has_one_cable_fiber_end" type="rel11" layer="0"
+	 src-col-pattern="{st}_{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.cable_fiber_end"
+	 dst-table="public.fiber_cable_located_in_fiber_enclosure"
+	 src-required="true" dst-required="false"/>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
