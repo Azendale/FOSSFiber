@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="0,0" last-zoom="1" max-obj-count="82"
+<dbmodel pgmodeler-ver="0.9.2-beta1" last-position="0,0" last-zoom="1" max-obj-count="80"
 	 default-owner="postgres">
 <database name="fossfiber" is-template="false" allow-conns="true">
 	<comment><![CDATA[Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer's employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.]]></comment>
@@ -310,7 +310,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[TODO: should this be one fiber for the whole length of the cable, or multiple rows in this table for when midspans happen in a cable?]]></comment>
-	<position x="2320" y="760"/>
+	<position x="2139" y="828"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -326,7 +326,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[Used to store the information about which fiber in a cable. Not columns on the fiber table because of the potential for varying numbers/levels of grouping in a cable. For example, on the huge fiber count cable, you could have multiple "buffer tubes" with multiple ribbons inside, and inside each ribbon multiple fibers.]]></comment>
-	<position x="2920" y="800"/>
+	<position x="2400" y="734"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -344,7 +344,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_cable_slack_coil" layer="0" collapse-mode="1" max-obj-count="6">
+<table name="fiber_cable_slack_coil" layer="0" collapse-mode="1" max-obj-count="7">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1760" y="1040"/>
@@ -363,6 +363,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="out_meterage">
 		<type name="real" length="0"/>
+	</column>
+	<column name="cable_sort">
+		<type name="real" length="0"/>
+		<comment><![CDATA[Where this item falls along the linear geography of its related cable. Lower priority alternative to meterage, for cases where meterage is not set.]]></comment>
 	</column>
 	<constraint name="fiber_cable_slack_coil_pk" type="pk-constr" table="public.fiber_cable_slack_coil">
 		<columns names="id" ref-type="src-columns"/>
@@ -754,43 +758,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<constraint name="fiber_connection_meta_instance_inheritance_pk" type="pk-constr" table="public.fiber_connection_meta_instance_inheritance">
 		<columns names="fiber_connection_id,inheriting_table_name,inheriting_table_fk_column_name" ref-type="src-columns"/>
-	</constraint>
-</table>
-
-<table name="fiber_cable_located_in_fiber_enclosure" layer="0" collapse-mode="1" max-obj-count="9">
-	<schema name="public"/>
-	<role name="postgres"/>
-	<position x="2280" y="940"/>
-	<column name="id" not-null="true">
-		<type name="serial" length="0"/>
-	</column>
-	<column name="fiber_cable_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="fiber_enclosure_id" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="cable_entry_in_meterage">
-		<type name="real" length="0"/>
-		<comment><![CDATA[The lower of the (two potential) meterage measurements where a fiber_cable enters or exits a fiber_enclosure. NULL means that the fiber_cable starts (going along the cable in ascending meterage)  in the fiber_enclosure.]]></comment>
-	</column>
-	<column name="cable_entry_out_meterage">
-		<type name="real" length="0"/>
-		<comment><![CDATA[The higher of the (two potential) meterage measurements where a fiber_cable enters or exits a fiber_enclosure. NULL means that the fiber_cable ends (going along the cable in ascending meterage) in the fiber_enclosure.]]></comment>
-	</column>
-	<column name="in_tape_marking">
-		<type name="text" length="0"/>
-		<comment><![CDATA[Tape colors/pattern for "in" cable entry.]]></comment>
-	</column>
-	<column name="out_tape_marking">
-		<type name="text" length="0"/>
-		<comment><![CDATA[Tape colors/pattern for "out" cable entry.]]></comment>
-	</column>
-	<constraint name="fiber_cable_located_in_fiber_enclosure_pk" type="pk-constr" table="public.fiber_cable_located_in_fiber_enclosure">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-	<constraint name="in_out_meterage_is_correct_direction" type="ck-constr" table="public.fiber_cable_located_in_fiber_enclosure">
-			<expression><![CDATA[cable_entry_in_meterage is NULL or cable_entry_out_meterage is NULL or cable_entry_in_meterage <= cable_entry_out_meterage]]></expression>
 	</constraint>
 </table>
 
@@ -1834,7 +1801,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="load_support_attachment_point" layer="0" collapse-mode="1" max-obj-count="8">
+<table name="load_support_attachment_point" layer="0" collapse-mode="1" max-obj-count="9">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<comment><![CDATA[An "attachment" of a load (fiber cable, strand, or even conduit) by a support (pole, building, strand, or even conduit or trench).]]></comment>
@@ -1853,6 +1820,10 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	<column name="load_meterage">
 		<type name="real" length="0"/>
 		<comment><![CDATA[For linear loads with footage/meterage on them (fiber, duct) footage or meterage where the support begins (as defined by a lowest "linear_sequence" value for a particular load).]]></comment>
+	</column>
+	<column name="load_sort">
+		<type name="real" length="0"/>
+		<comment><![CDATA[Where this attachment point should sort to in the list of related items/events (segment ends, cases, slack loops) along its related load. Lower priority alternative to meterage, for cases where load_meterage is not set.]]></comment>
 	</column>
 	<column name="pole_attachment_id">
 		<type name="integer" length="0"/>
@@ -1940,7 +1911,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="fiber_cable_segment" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="2319" y="648"/>
+	<position x="2274" y="615"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -1957,9 +1928,10 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 dst-table="public.fiber_cable_segment"
 	 src-required="true" dst-required="false"/>
 
-<table name="fiber_cable_segment_end" layer="0" collapse-mode="1" max-obj-count="3">
+<table name="fiber_cable_segment_end" layer="0" collapse-mode="1" max-obj-count="9">
 	<schema name="public"/>
 	<role name="postgres"/>
+	<comment><![CDATA[meterage of the cable at this end of the segment.]]></comment>
 	<position x="2735" y="638"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
@@ -1968,16 +1940,33 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 		<type name="bool" length="0"/>
 		<comment><![CDATA[If true, then going from the end down the fiber cable, cable meterage will be ascending. If false, it will be decending.]]></comment>
 	</column>
+	<column name="cable_meterage">
+		<type name="real" length="0"/>
+	</column>
+	<column name="cable_sort">
+		<type name="real" length="0"/>
+		<comment><![CDATA[Where this item falls along the linear geography of its related cable. Lower priority alternative to meterage, for cases where meterage is not set.]]></comment>
+	</column>
+	<column name="tape_marking">
+		<type name="text" length="0"/>
+		<comment><![CDATA[Marking of the cable with colored tape. Convention for order of colors is from the field to the end of the cable.]]></comment>
+	</column>
+	<column name="label">
+		<type name="text" length="0"/>
+		<comment><![CDATA[Textual label of the cable end, if there is one.]]></comment>
+	</column>
 	<constraint name="fiber_cable_segment_end_pk" type="pk-constr" table="public.fiber_cable_segment_end">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
 		<object name="fiber_cable_segment_id" index="1"/>
+		<object name="fiber_enclosure_id" index="7"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
 		<object name="fiber_cable_segment_fk" index="0"/>
+		<object name="fiber_enclosure_fk" index="2"/>
 	</customidxs>
 </table>
 
@@ -1997,13 +1986,13 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 dst-table="public.cable_fiber_end"
 	 src-required="true" dst-required="false"/>
 
-<relationship name="fiber_cable_located_in_fiber_enclosure_has_one_cable_fiber_end" type="rel11" layer="0"
+<relationship name="fiber_cable_segment_end_may_enter_fiber_enclosure" type="rel1n" layer="0"
 	 src-col-pattern="{st}_{sc}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
-	 src-table="public.cable_fiber_end"
-	 dst-table="public.fiber_cable_located_in_fiber_enclosure"
-	 src-required="true" dst-required="false"/>
+	 src-table="public.fiber_enclosure"
+	 dst-table="public.fiber_cable_segment_end"
+	 src-required="false" dst-required="false"/>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.utility_pole" table="public.pole_attachment">
@@ -2200,18 +2189,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <constraint name="fiber_connection_can_be_inherited_by_many_tables" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_connection" table="public.fiber_connection_meta_instance_inheritance">
 	<columns names="fiber_connection_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="fiber_cable_located_in_fiber_enclosure_has_fiber_cable" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_cable" table="public.fiber_cable_located_in_fiber_enclosure">
-	<columns names="fiber_cable_id" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
-<constraint name="fiber_cable_located_in_fiber_enclosure_has_fiber_enclosure" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.fiber_enclosure" table="public.fiber_cable_located_in_fiber_enclosure">
-	<columns names="fiber_enclosure_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -2576,16 +2553,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <relationship name="rel_fiber_connection_meta_instance_inheritance_fiber_connection" type="relfk" layer="0"
 	 src-table="public.fiber_connection_meta_instance_inheritance"
 	 dst-table="public.fiber_connection" reference-fk="fiber_connection_can_be_inherited_by_many_tables"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_cable_located_in_fiber_enclosure_fiber_cable" type="relfk" layer="0"
-	 src-table="public.fiber_cable_located_in_fiber_enclosure"
-	 dst-table="public.fiber_cable" reference-fk="fiber_cable_located_in_fiber_enclosure_has_fiber_cable"
-	 src-required="false" dst-required="false"/>
-
-<relationship name="rel_fiber_cable_located_in_fiber_enclosure_fiber_enclosure" type="relfk" layer="0"
-	 src-table="public.fiber_cable_located_in_fiber_enclosure"
-	 dst-table="public.fiber_enclosure" reference-fk="fiber_cable_located_in_fiber_enclosure_has_fiber_enclosure"
 	 src-required="false" dst-required="false"/>
 
 <relationship name="rel_enclosure_port_template_fiber_enclosure_template" type="relfk" layer="0"
