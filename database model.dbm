@@ -344,7 +344,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="fiber_cable_slack_coil" layer="0" collapse-mode="1" max-obj-count="7">
+<table name="fiber_cable_slack_coil" layer="0" collapse-mode="1" max-obj-count="8">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="1760" y="1040"/>
@@ -358,7 +358,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="real" length="0"/>
 		<comment><![CDATA[length in meters of where the slack coil is along the cable. Where the slack loop "starts" when going down the cable in ascending measurement numbers.]]></comment>
 	</column>
-	<column name="latlong">
+	<column name="latlong_root">
+		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
+	</column>
+	<column name="latlong_free_end">
 		<type name="geography" length="0" spatial-type="POINT" variation="0" srid="4326"/>
 	</column>
 	<column name="out_meterage">
