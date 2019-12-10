@@ -12,59 +12,77 @@
 from django.contrib.gis.db import models
 
 
-class Building(models.Model):
-    address_number = models.TextField(blank=True, null=True)
-    street = models.TextField(blank=True, null=True)
+class Address(models.Model):
+    address_number = models.IntegerField(blank=True, null=True)
+    address_number_fraction = models.TextField(blank=True, null=True)
+    street_direction_pre = models.TextField(blank=True, null=True)
+    street_name = models.TextField(blank=True, null=True)
+    road_type_abbreviation = models.TextField(blank=True, null=True)
+    street_direction_post = models.TextField(blank=True, null=True)
+    sublocation_label = models.TextField(blank=True, null=True)
+    sublocation_identifier = models.TextField(blank=True, null=True)
     city = models.TextField(blank=True, null=True)
     state = models.TextField(blank=True, null=True)
-    zip = models.TextField(blank=True, null=True)
-    suite_apt = models.TextField(blank=True, null=True)
+    zip_code = models.IntegerField(blank=True, null=True)
+    building_location = models.GeometryField()
+    ext_tb_location_id = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'address'
+
+
+class Building(models.Model):
 
     class Meta:
         managed = False
         db_table = 'building'
 
 
-class BuildingAttachment(models.Model):
-    building = models.ForeignKey(Building, models.DO_NOTHING)
-    attachment_point = models.PointField()
-
-    class Meta:
-        managed = False
-        db_table = 'building_attachment'
-
-
-class BuildingAttachmentMetaInstance(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING)
-    inheriting_table_name = models.TextField()
-    inheriting_cable_fk_column_name = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'building_attachment_meta_instance'
-        unique_together = (('building_attachment', 'inheriting_table_name', 'inheriting_cable_fk_column_name'),)
-
-
 class CableFiberEnd(models.Model):
     fiber = models.ForeignKey('Fiber', models.DO_NOTHING)
-    start_end = models.BooleanField()
     fiber_end = models.ForeignKey('FiberEnd', models.DO_NOTHING, unique=True)
-    meterage = models.FloatField()
+    fiber_cable_segment_end = models.ForeignKey('FiberCableSegmentEnd', models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'cable_fiber_end'
 
 
+class Conduit(models.Model):
+    length = models.FloatField(blank=True, null=True)
+    conduit_route = models.LineStringField(blank=True, null=True)
+    conduit_type = models.ForeignKey('ConduitType', models.DO_NOTHING)
+    built = models.DateTimeField(blank=True, null=True)
+    underground = models.BooleanField(blank=True, null=True)
+    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'conduit'
+
+
 class ConduitType(models.Model):
     diameter = models.FloatField(blank=True, null=True)
-    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True, related_name='used_as_conduit_diameter')
-    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True, related_name='used_as_conduit_length')
+    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True)
+    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
     conduit_type_name = models.TextField()
 
     class Meta:
         managed = False
         db_table = 'conduit_type'
+
+
+class ConduitVaultEntryOrEnd(models.Model):
+    meterage = models.FloatField(blank=True, null=True)
+    f_end = models.BooleanField(blank=True, null=True)
+    vault_sequence = models.FloatField(blank=True, null=True)
+    underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
+    conduit = models.ForeignKey(Conduit, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'conduit_vault_entry_or_end'
 
 
 class EnclosurePort(models.Model):
@@ -103,69 +121,42 @@ class FiberCable(models.Model):
     f_armored = models.BooleanField(blank=True, null=True)
     f_outdoor = models.BooleanField(blank=True, null=True)
     fiber_groups_top_level_count = models.SmallIntegerField(blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'fiber_cable'
 
 
-class FiberCableAttachment(models.Model):
-    fiber_cable_meterage = models.FloatField()
-    fiber_cable_meterage_is_guess = models.BooleanField()
+class FiberCableSegment(models.Model):
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'fiber_cable_attachment'
+        db_table = 'fiber_cable_segment'
 
 
-class FiberCableAttachmentMetaInstanceInheritance(models.Model):
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING)
-    inheriting_table_name = models.TextField()
-    inheriting_table_fk_column_name = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'fiber_cable_attachment_meta_instance_inheritance'
-        unique_together = (('fiber_cable_attachment', 'inheriting_table_name', 'inheriting_table_fk_column_name'),)
-
-
-class FiberCableBuildingAttachment(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING, unique=True)
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
+class FiberCableSegmentEnd(models.Model):
+    fiber_cable_segment = models.ForeignKey(FiberCableSegment, models.DO_NOTHING)
+    start_end = models.BooleanField(blank=True, null=True)
+    cable_meterage = models.FloatField(blank=True, null=True)
+    cable_sort = models.FloatField(blank=True, null=True)
+    tape_marking = models.TextField(blank=True, null=True)
+    label = models.TextField(blank=True, null=True)
+    fiber_enclosure = models.ForeignKey('FiberEnclosure', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'fiber_cable_building_attachment'
-
-
-class FiberCableLocatedInFiberEnclosure(models.Model):
-    fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
-    fiber_enclosure = models.ForeignKey('FiberEnclosure', models.DO_NOTHING)
-    cable_entry_in_meterage = models.FloatField(blank=True, null=True)
-    cable_entry_out_meterage = models.FloatField(blank=True, null=True)
-    in_tape_marking = models.TextField(blank=True, null=True)
-    out_tape_marking = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'fiber_cable_located_in_fiber_enclosure'
-
-
-class FiberCablePoleAttachment(models.Model):
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
-    pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING, unique=True)
-
-    class Meta:
-        managed = False
-        db_table = 'fiber_cable_pole_attachment'
+        db_table = 'fiber_cable_segment_end'
 
 
 class FiberCableSlackCoil(models.Model):
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
     in_meterage = models.FloatField(blank=True, null=True)
-    latlong = models.PointField(geography=True, blank=True, null=True)
+    latlong_root = models.PointField(geography=True, blank=True, null=True)
+    latlong_free_end = models.PointField(geography=True, blank=True, null=True)
     out_meterage = models.FloatField(blank=True, null=True)
+    cable_sort = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -179,17 +170,6 @@ class FiberCableSlackCoilLocatedInUndergroundVault(models.Model):
     class Meta:
         managed = False
         db_table = 'fiber_cable_slack_coil_located_in_underground_vault'
-
-
-class FiberCableStrandAttachment(models.Model):
-    segment_percentage = models.FloatField(blank=True, null=True)
-    strand_attachment_a = models.ForeignKey('StrandAttachment', models.DO_NOTHING, related_name='as_FiberCableStrandAttachment_a')
-    strand_attachment_b = models.ForeignKey('StrandAttachment', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberCableStrandAttachment_b')
-    fiber_cable_attachment = models.ForeignKey(FiberCableAttachment, models.DO_NOTHING, unique=True)
-
-    class Meta:
-        managed = False
-        db_table = 'fiber_cable_strand_attachment'
 
 
 class FiberCableTemplate(models.Model):
@@ -206,10 +186,11 @@ class FiberCableTemplate(models.Model):
 
 
 class FiberConnection(models.Model):
-    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_a_side')
-    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='connected_to_b_side')
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_fiber_connection_a_side')
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_fiber_connection_b_side')
+    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
+    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -217,8 +198,8 @@ class FiberConnection(models.Model):
 
 
 class FiberConnectionEnclosurePortTemplate(models.Model):
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_a')
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='as_FiberConnectionEnclosurePortTemplate_b')
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -226,7 +207,7 @@ class FiberConnectionEnclosurePortTemplate(models.Model):
 
 
 class FiberConnectionMetaInstanceInheritance(models.Model):
-    fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING)
+    fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING, primary_key=True)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -240,6 +221,7 @@ class FiberEnclosure(models.Model):
     longlat = models.PointField(geography=True, blank=True, null=True)
     manufacturer_name = models.TextField(blank=True, null=True)
     enclosure_model = models.TextField(blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -283,7 +265,7 @@ class FiberEnd(models.Model):
 
 
 class FiberEndMetaInstanceInheritance(models.Model):
-    fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING)
+    fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING, primary_key=True)
     inheriting_table_name = models.TextField()
     inheriting_table_fk_column_name = models.TextField()
 
@@ -539,6 +521,48 @@ class LengthUnits(models.Model):
         db_table = 'length_units'
 
 
+class LoadSupportAttachment(models.Model):
+    load_linear_sequence = models.FloatField(blank=True, null=True)
+    type_load = models.SmallIntegerField()
+    type_support = models.SmallIntegerField()
+    linear_reverse = models.BooleanField(blank=True, null=True)
+    fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING, blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
+    supporting_building = models.ForeignKey(Building, models.DO_NOTHING, blank=True, null=True)
+    support_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True)
+    load_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True)
+    support_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True)
+    load_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'load_support_attachment'
+
+
+class LoadSupportAttachmentPoint(models.Model):
+    linear_sequence = models.FloatField(blank=True, null=True)
+    latlong_cached = models.PointField(blank=True, null=True)
+    load_meterage = models.FloatField(blank=True, null=True)
+    load_sort = models.FloatField(blank=True, null=True)
+    pole_attachment = models.ForeignKey('PoleAttachment', models.DO_NOTHING, blank=True, null=True)
+    underlying_load_support_attachment_point_id = models.IntegerField(blank=True, null=True)
+    load_support_attachment = models.ForeignKey(LoadSupportAttachment, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'load_support_attachment_point'
+
+
+class ManyBuildingHasManyAddress(models.Model):
+    building = models.ForeignKey(Building, models.DO_NOTHING, primary_key=True)
+    building_id1 = models.ForeignKey(Address, models.DO_NOTHING, db_column='building_id1')
+
+    class Meta:
+        managed = False
+        db_table = 'many_building_has_many_address'
+        unique_together = (('building', 'building_id1'),)
+
+
 class MapBookmark(models.Model):
     map_center = models.PointField()
     zoom_level = models.IntegerField(blank=True, null=True)
@@ -565,6 +589,7 @@ class OpticalSplitter(models.Model):
     splitter_type = models.ForeignKey('OpticalSplitterTypes', models.DO_NOTHING, blank=True, null=True)
     splitter_style = models.ForeignKey('OpticalSplitterStyles', models.DO_NOTHING, blank=True, null=True)
     containing_fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING, db_column='containing_fiber_enclosure', blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -659,73 +684,21 @@ class PoleAttachment(models.Model):
     utility_pole = models.ForeignKey('UtilityPole', models.DO_NOTHING)
     f_permitting_requested = models.BooleanField(blank=True, null=True)
     f_permitting_granted = models.BooleanField()
-    f_built = models.BooleanField(blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
+    njuns_remarks = models.TextField(blank=True, null=True)
+    njuns_ticket = models.TextField(blank=True, null=True)
+    njuns_asset_uuid = models.UUIDField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'pole_attachment'
 
 
-class PoleAttachmentMetaInstanceInheritance(models.Model):
-    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
-    inheriting_table_name = models.TextField()
-    inheriting_table_fk_column_name = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'pole_attachment_meta_instance_inheritance'
-        unique_together = (('pole_attachment', 'inheriting_table_name', 'inheriting_table_fk_column_name'),)
-
-
-class ServiceAddress(models.Model):
-    address_number = models.IntegerField(blank=True, null=True)
-    address_number_fraction = models.TextField(blank=True, null=True)
-    street_direction = models.TextField(blank=True, null=True)
-    street_name = models.TextField(blank=True, null=True)
-    road_type_abbreviation = models.TextField(blank=True, null=True)
-    city = models.TextField(blank=True, null=True)
-    zip_code = models.IntegerField(blank=True, null=True)
-    building_location = models.GeometryField()
-    ext_tb_location_id = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'service_address'
-
-
-class StrandAttachment(models.Model):
-    strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING)
-    strand_line_squence = models.FloatField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'strand_attachment'
-
-
-class StrandAttachmentMetaInstanceInheritance(models.Model):
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING)
-    inheriting_table_name = models.TextField()
-    inheriting_table_fk_column_name = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'strand_attachment_meta_instance_inheritance'
-        unique_together = (('strand_attachment', 'inheriting_table_name', 'inheriting_table_fk_column_name'),)
-
-
-class StrandBuildingAttachment(models.Model):
-    building_attachment = models.ForeignKey(BuildingAttachment, models.DO_NOTHING, unique=True)
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True)
-
-    class Meta:
-        managed = False
-        db_table = 'strand_building_attachment'
-
-
 class StrandGuyWire(models.Model):
     sidewalk_standoff_pipe = models.BooleanField(blank=True, null=True)
     pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING)
     azimuth_from_pole = models.SmallIntegerField(blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -733,42 +706,11 @@ class StrandGuyWire(models.Model):
 
 
 class StrandLine(models.Model):
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'strand_line'
-
-
-class StrandPoleAttachment(models.Model):
-    pole_attachment = models.ForeignKey(PoleAttachment, models.DO_NOTHING, unique=True)
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True)
-
-    class Meta:
-        managed = False
-        db_table = 'strand_pole_attachment'
-
-
-class StrandToStrandAttachment(models.Model):
-    percentage_along_segment = models.FloatField()
-    segment_strand_attachment_a = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_a')
-    segment_strand_attachment_b = models.ForeignKey(StrandAttachment, models.DO_NOTHING, related_name='as_StrandToStrandAttachment_b')
-    strand_attachment = models.ForeignKey(StrandAttachment, models.DO_NOTHING, unique=True, related_name='as_StrandToStrandAttachment_baseclass')
-
-    class Meta:
-        managed = False
-        db_table = 'strand_to_strand_attachment'
-
-
-class UndergroundConduit(models.Model):
-    length = models.FloatField(blank=True, null=True)
-    start_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_a')
-    end_underground_vault_entry = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True, related_name='as_UndergroundConduit_entry_b')
-    conduit_route = models.LineStringField(blank=True, null=True)
-    conduit_type = models.ForeignKey(ConduitType, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'underground_conduit'
 
 
 class UndergroundVault(models.Model):
@@ -779,6 +721,7 @@ class UndergroundVault(models.Model):
     length_units = models.ForeignKey(LengthUnits, models.DO_NOTHING, blank=True, null=True)
     manufacturer_name = models.TextField(blank=True, null=True)
     vault_model = models.TextField(blank=True, null=True)
+    built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
