@@ -45,6 +45,8 @@ DATABASES = get_non_vcs_setting('DATABASES')
 
 ALLOWED_HOSTS = get_non_vcs_setting('ALLOWED_HOSTS')
 
+STATIC_FILES = get_non_vcs_setting('STATIC_FILES')
+
 # Application definition
 
 INSTALLED_APPS = [
