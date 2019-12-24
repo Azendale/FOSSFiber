@@ -64,8 +64,8 @@ class Conduit(models.Model):
 
 class ConduitType(models.Model):
     diameter = models.FloatField(blank=True, null=True)
-    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True)
-    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True)
+    diameter_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='diameter_units', blank=True, null=True, related_name='units_as_conduit_diameter')
+    length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True, related_name='units_as_conduit_length')
     conduit_type_name = models.TextField()
 
     class Meta:
@@ -186,10 +186,10 @@ class FiberCableTemplate(models.Model):
 
 
 class FiberConnection(models.Model):
-    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
-    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True)
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    connected_fiber_end_a = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='fiber_end_as_side_a')
+    connected_fiber_end_b = models.ForeignKey('FiberEnd', models.DO_NOTHING, blank=True, null=True, related_name='fiber_end_as_side_b')
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_side_a')
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_side_b')
     built = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -198,8 +198,8 @@ class FiberConnection(models.Model):
 
 
 class FiberConnectionEnclosurePortTemplate(models.Model):
-    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
-    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+    a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_enclosure_template_a')
+    b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_enclosure_template_b')
 
     class Meta:
         managed = False
@@ -529,10 +529,10 @@ class LoadSupportAttachment(models.Model):
     fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING, blank=True, null=True)
     built = models.DateTimeField(blank=True, null=True)
     supporting_building = models.ForeignKey(Building, models.DO_NOTHING, blank=True, null=True)
-    support_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True)
-    load_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True)
-    support_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True)
-    load_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True)
+    support_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True, related_name='conduit_as_lsa_support')
+    load_conduit = models.ForeignKey(Conduit, models.DO_NOTHING, blank=True, null=True, related_name='conduit_as_lsa_load')
+    support_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True, related_name='strand_as_lsa_support')
+    load_strand_line = models.ForeignKey('StrandLine', models.DO_NOTHING, blank=True, null=True, related_name='strand_as_lsa_load')
 
     class Meta:
         managed = False
