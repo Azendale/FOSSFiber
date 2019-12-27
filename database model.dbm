@@ -764,12 +764,15 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="building" layer="0" collapse-mode="1" max-obj-count="1">
+<table name="building" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="843" y="432"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
+	</column>
+	<column name="building_location" not-null="true">
+		<type name="geometry" length="0" spatial-type="GEOMETRY" variation="0" srid="4326"/>
 	</column>
 	<constraint name="building_pk" type="pk-constr" table="public.building">
 		<columns names="id" ref-type="src-columns"/>
@@ -1667,7 +1670,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="address" layer="0" collapse-mode="1" max-obj-count="16">
+<table name="address" layer="0" collapse-mode="1" max-obj-count="15">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="222" y="701"/>
@@ -1714,9 +1717,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</column>
 	<column name="zip_code">
 		<type name="integer" length="0"/>
-	</column>
-	<column name="building_location" not-null="true">
-		<type name="geometry" length="0" spatial-type="GEOMETRY" variation="0" srid="4326"/>
 	</column>
 	<column name="ext_tb_location_id">
 		<type name="integer" length="0"/>

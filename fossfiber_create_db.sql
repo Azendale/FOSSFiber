@@ -542,6 +542,7 @@ ALTER TABLE public.fiber_connection_meta_instance_inheritance OWNER TO postgres;
 -- DROP TABLE IF EXISTS public.building CASCADE;
 CREATE TABLE public.building (
 	id serial NOT NULL,
+	building_location geometry(GEOMETRY, 4326) NOT NULL,
 	CONSTRAINT building_pk PRIMARY KEY (id)
 
 );
@@ -1216,7 +1217,6 @@ CREATE TABLE public.address (
 	city text,
 	state text,
 	zip_code integer,
-	building_location geometry(GEOMETRY, 4326) NOT NULL,
 	ext_tb_location_id integer,
 	CONSTRAINT service_address_pk PRIMARY KEY (id)
 

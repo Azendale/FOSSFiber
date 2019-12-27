@@ -24,7 +24,6 @@ class Address(models.Model):
     city = models.TextField(blank=True, null=True)
     state = models.TextField(blank=True, null=True)
     zip_code = models.IntegerField(blank=True, null=True)
-    building_location = models.GeometryField()
     ext_tb_location_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -33,6 +32,7 @@ class Address(models.Model):
 
 
 class Building(models.Model):
+    building_location = models.GeometryField()
 
     class Meta:
         managed = False
