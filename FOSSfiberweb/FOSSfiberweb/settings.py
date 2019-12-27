@@ -132,3 +132,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LEAFLET_CONFIG = get_non_vcs_setting('LEAFLET_CONFIG')
+
+AUTHENTICATION_BACKENDS = get_non_vcs_setting('AUTHENTICATION_BACKENDS')
+
+try:
+	RADIUS_SERVER = get_non_vcs_setting('RADIUS_SERVER')
+	RADIUS_PORT = get_non_vcs_setting('RADIUS_PORT')
+	RADIUS_SECRET = get_non_vcs_setting('RADIUS_SECRET')
+	RADIUS_CLASS_APP_PREFIX = get_non_vcs_setting('RADIUS_CLASS_APP_PREFIX')
+except:
+	pass
+
