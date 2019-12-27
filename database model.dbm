@@ -767,7 +767,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 <table name="building" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="843" y="432"/>
+	<position x="626" y="546"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -1670,7 +1670,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	</constraint>
 </table>
 
-<table name="address" layer="0" collapse-mode="1" max-obj-count="15">
+<table name="address" layer="0" collapse-mode="1" max-obj-count="16">
 	<schema name="public"/>
 	<role name="postgres"/>
 	<position x="222" y="701"/>
@@ -1901,16 +1901,6 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 dst-table="public.conduit"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="many_building_has_many_address" type="relnn" layer="0"
-	 src-col-pattern="{st}_{sc}" dst-col-pattern="{st}_{sc}"
-	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
-	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
-	 pk-col-pattern="id"
-	 src-table="public.building"
-	 dst-table="public.address"
-	 src-required="false" dst-required="false"
-	 table-name="many_building_has_many_address"/>
-
 <table name="fiber_cable_segment" layer="0" collapse-mode="1" max-obj-count="2">
 	<schema name="public"/>
 	<role name="postgres"/>
@@ -1995,6 +1985,14 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 src-fk-pattern="{st}_fk"
 	 src-table="public.fiber_enclosure"
 	 dst-table="public.fiber_cable_segment_end"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="building_may_have_multiple_addresses" type="rel1n" layer="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="public.building"
+	 dst-table="public.address"
 	 src-required="false" dst-required="false"/>
 
 <constraint name="pole_reference" type="fk-constr" comparison-type="MATCH FULL"
