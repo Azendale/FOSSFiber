@@ -131,3 +131,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LEAFLET_CONFIG = get_non_vcs_setting('STATIC_ROOT')
