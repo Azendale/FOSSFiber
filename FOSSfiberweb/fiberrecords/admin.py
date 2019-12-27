@@ -4,7 +4,7 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Address)
-admin.site.register(Building)
+admin.site.register(Building, LeafletGeoAdmin)
 admin.site.register(CableFiberEnd)
 admin.site.register(Conduit, LeafletGeoAdmin)
 admin.site.register(ConduitType)
