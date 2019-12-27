@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS fossfiber;
+CREATE DATABASE fossfiber;
+COMMENT ON DATABASE fossfiber IS 'Database Schema and format Licensed under the AGPL v 3.0, available at https://www.gnu.org/licenses/agpl-3.0-standalone.html . Note that for the purposes of this project, use over a network by a employer''s employees constitues distribution and causes the requirements for provision of source code for any modifications to apply. The author of this project specifically requires that the distribution of changed source be also made available to the public at large, minus any keys, passwords, or other access credentials that may be embedded in the source code. Making source code available in a publicly accessible github repository qualifies to meet this requirement.';
