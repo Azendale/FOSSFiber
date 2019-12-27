@@ -25,6 +25,7 @@ class Address(models.Model):
     state = models.TextField(blank=True, null=True)
     zip_code = models.IntegerField(blank=True, null=True)
     ext_tb_location_id = models.IntegerField(blank=True, null=True)
+    building = models.ForeignKey('Building', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -551,16 +552,6 @@ class LoadSupportAttachmentPoint(models.Model):
     class Meta:
         managed = False
         db_table = 'load_support_attachment_point'
-
-
-class ManyBuildingHasManyAddress(models.Model):
-    building = models.ForeignKey(Building, models.DO_NOTHING, primary_key=True)
-    building_id1 = models.ForeignKey(Address, models.DO_NOTHING, db_column='building_id1')
-
-    class Meta:
-        managed = False
-        db_table = 'many_building_has_many_address'
-        unique_together = (('building', 'building_id1'),)
 
 
 class MapBookmark(models.Model):
