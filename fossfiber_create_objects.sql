@@ -1218,6 +1218,7 @@ CREATE TABLE public.address (
 	state text,
 	zip_code integer,
 	ext_tb_location_id integer,
+	building_id integer,
 	CONSTRAINT service_address_pk PRIMARY KEY (id)
 
 );
@@ -1374,30 +1375,6 @@ REFERENCES public.length_units (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: public.many_building_has_many_address | type: TABLE --
--- DROP TABLE IF EXISTS public.many_building_has_many_address CASCADE;
-CREATE TABLE public.many_building_has_many_address (
-	building_id integer NOT NULL,
-	building_id1 integer NOT NULL,
-	CONSTRAINT many_building_has_many_address_pk PRIMARY KEY (building_id,building_id1)
-
-);
--- ddl-end --
-
--- object: building_fk | type: CONSTRAINT --
--- ALTER TABLE public.many_building_has_many_address DROP CONSTRAINT IF EXISTS building_fk CASCADE;
-ALTER TABLE public.many_building_has_many_address ADD CONSTRAINT building_fk FOREIGN KEY (building_id)
-REFERENCES public.building (id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
-
--- object: address_fk | type: CONSTRAINT --
--- ALTER TABLE public.many_building_has_many_address DROP CONSTRAINT IF EXISTS address_fk CASCADE;
-ALTER TABLE public.many_building_has_many_address ADD CONSTRAINT address_fk FOREIGN KEY (building_id1)
-REFERENCES public.address (id) MATCH FULL
-ON DELETE RESTRICT ON UPDATE CASCADE;
--- ddl-end --
-
 -- object: public.fiber_cable_segment | type: TABLE --
 -- DROP TABLE IF EXISTS public.fiber_cable_segment CASCADE;
 CREATE TABLE public.fiber_cable_segment (
@@ -1463,6 +1440,13 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ALTER TABLE public.fiber_cable_segment_end DROP CONSTRAINT IF EXISTS fiber_enclosure_fk CASCADE;
 ALTER TABLE public.fiber_cable_segment_end ADD CONSTRAINT fiber_enclosure_fk FOREIGN KEY (fiber_enclosure_id)
 REFERENCES public.fiber_enclosure (id) MATCH FULL
+ON DELETE SET NULL ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: building_fk | type: CONSTRAINT --
+-- ALTER TABLE public.address DROP CONSTRAINT IF EXISTS building_fk CASCADE;
+ALTER TABLE public.address ADD CONSTRAINT building_fk FOREIGN KEY (building_id)
+REFERENCES public.building (id) MATCH FULL
 ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
 

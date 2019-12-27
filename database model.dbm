@@ -1988,7 +1988,7 @@ select fiber_connection.id, fiber_connection.connected_fiber_end_b_id, fiber_con
 	 src-required="false" dst-required="false"/>
 
 <relationship name="building_may_have_multiple_addresses" type="rel1n" layer="0"
-	 src-col-pattern="{sc}_{st}"
+	 src-col-pattern="{st}_{sc}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 src-table="public.building"
