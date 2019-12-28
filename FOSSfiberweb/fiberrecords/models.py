@@ -528,9 +528,13 @@ class LengthUnits(models.Model):
 	unit_name = models.TextField()
 	unit_shortsymbol = models.TextField()
 
+	def __str__(self):
+		return self.unit_name
+
 	class Meta:
 		managed = False
 		db_table = 'length_units'
+
 
 
 class LoadSupportAttachment(models.Model):
