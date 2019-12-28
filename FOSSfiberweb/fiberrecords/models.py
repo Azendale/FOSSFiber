@@ -27,6 +27,11 @@ class Address(models.Model):
 	ext_tb_location_id = models.IntegerField(blank=True, null=True)
 	building = models.ForeignKey('Building', models.DO_NOTHING, blank=True, null=True)
 
+	def __unicode__(self):
+		streetline = ' '.join([ x for x in [self.address_number, self.address_number_fraction, self.street_direction_pre, self.street_name, self.road_type_abbreviation, self.street_direction_post] if x])
+		sublocline = ' '.join([ x for x in [self.sublocation_label, self.sublocation_identifier] if x])
+		return ','.join([x for x in [streetline, sublocline, self.city, self.state, self.zip if x])
+
 	class Meta:
 		managed = False
 		db_table = 'address'
