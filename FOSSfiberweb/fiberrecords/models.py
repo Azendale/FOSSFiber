@@ -80,6 +80,9 @@ class ConduitType(models.Model):
 	length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, db_column='length_units', blank=True, null=True, related_name='units_as_conduit_length')
 	conduit_type_name = models.TextField()
 
+	def __str__(self):
+		return conduit_type_name
+
 	class Meta:
 		managed = False
 		db_table = 'conduit_type'
