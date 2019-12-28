@@ -81,7 +81,7 @@ class ConduitType(models.Model):
 	conduit_type_name = models.TextField()
 
 	def __str__(self):
-		return conduit_type_name
+		return self.conduit_type_name
 
 	class Meta:
 		managed = False
