@@ -32,6 +32,9 @@ class Address(models.Model):
 		sublocline = ' '.join([ x for x in [self.sublocation_label, self.sublocation_identifier] if x])
 		return ','.join([x for x in [streetline, sublocline, self.city, self.state, self.zip] if x])
 
+	def __str__(self):
+		return self.__unicode__()
+
 	class Meta:
 		managed = False
 		db_table = 'address'
