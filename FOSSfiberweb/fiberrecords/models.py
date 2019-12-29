@@ -11,6 +11,17 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.contrib.gis.db import models
 
+def meters_to_inches(meters):
+	return meters/0.0254
+
+def inches_to_meters(inches):
+	return inches*0.0254
+
+def inches_to_ftinches(inches):
+	return int(inches/12), inches%12
+
+def ftinches_to_inches(feet, inches):
+	return (feet*12)+inches
 
 class Address(models.Model):
 	address_number = models.IntegerField(blank=True, null=True)
@@ -683,6 +694,12 @@ class OpticalSplitterTypes(models.Model):
 	type_label = models.TextField()
 	symmetric_outputs = models.BooleanField()
 
+	def __str__(self):
+		return self.type_label
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'optical_splitter_types'
@@ -698,6 +715,13 @@ class PoleAttachment(models.Model):
 	njuns_ticket = models.TextField(blank=True, null=True)
 	njuns_asset_uuid = models.UUIDField(blank=True, null=True)
 
+	def __str__(self):
+		return 'attachment to pole ' + str(self.utility_pole)
+
+	def __repr__(self):
+		return self.__dict__
+
+
 	class Meta:
 		managed = False
 		db_table = 'pole_attachment'
@@ -709,6 +733,20 @@ class StrandGuyWire(models.Model):
 	azimuth_from_pole = models.SmallIntegerField(blank=True, null=True)
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __repr__(self):
+		return self.__dict__
+
+	def __str__(self):
+		description = 'guy wire on ' + str(self.pole_attachement.utility_pole)
+		if self.azimuth_from_pole:
+			description += ' az {}'.format(str(self.azimuth_from_pole))
+		if self.sidewalk_standoff_pipe:
+			description += ' w/ standoff'
+		if None == self.built:
+			description = 'planned ' + description
+		else:
+			description += ' built ' + self.built.strftime('%Y-%m-%d')
+
 	class Meta:
 		managed = False
 		db_table = 'strand_guy_wire'
@@ -716,6 +754,9 @@ class StrandGuyWire(models.Model):
 
 class StrandLine(models.Model):
 	built = models.DateTimeField(blank=True, null=True)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -732,6 +773,17 @@ class UndergroundVault(models.Model):
 	vault_model = models.TextField(blank=True, null=True)
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __str__(self):
+		if 'feet' == self.length_units.unit_name
+			dimensions_strings = [ str(int(meters_to_inches(getattr(self, x, 0.0)))) for x in ['depth', 'width', 'length']]
+		else:
+			dimensions_strings = [ x for x in ['depth', 'width', 'length']]
+
+		return '{} {} {} {}'.format(self.manufacturer_name, self.vault_model, ' x '.join(dimensions_strings), self.length_units.unit_shortsymbol)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'underground_vault'
@@ -746,6 +798,17 @@ class UndergroundVaultTemplate(models.Model):
 	vault_model = models.TextField(blank=True, null=True)
 	template_name = models.TextField()
 
+	def __str__(self):
+		if 'feet' == self.length_units.unit_name
+			dimensions_strings = [ str(int(meters_to_inches(getattr(self, x, 0.0)))) for x in ['depth', 'width', 'length']]
+		else:
+			dimensions_strings = [ x for x in ['depth', 'width', 'length']]
+
+		return '{}: {} {} {} {}'.format(self.template_name, self.manufacturer_name, self.vault_model, ' x '.join(dimensions_strings), self.length_units.unit_shortsymbol)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'underground_vault_template'
@@ -755,6 +818,12 @@ class UtilityPole(models.Model):
 	pole_owner = models.TextField(blank=True, null=True)
 	pole_owner_primary_label = models.TextField(blank=True, null=True)
 	latlong = models.PointField()
+
+	def __str__(self):
+		return ' '.join([x for x in [self.pole_owner, self.pole_owner_primary_label] if x])
+
+	def __repr__(self):
+		return {'pole_owner': self.pole_owner, 'pole_owner_primary_label': self.pole_owner_primary_label, 'latlong': self.latlong}
 
 	class Meta:
 		managed = False
