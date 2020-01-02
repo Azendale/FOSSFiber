@@ -10,6 +10,11 @@
 #	* Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.contrib.gis.db import models
+from django.db.models import Q
+import functools
+
+indextocolor = ['1basedindexingpad', 'blue', 'orange', 'green', 'brown', 'slate', 'white', 'red', 'black', 'yellow', 'violet', 'rose', 'auqa', 'blue w/ black', 'orange w/ black', 'green w/ black', 'brown w/ black', 'slate w/ black', 'white w/ black', 'red w/ black', 'black w/ white', 'yellow w/ black', 'violet w/ black', 'rose w/ black', 'auqa w/ black']
+colortoindex = dict(zip(indextocolor[1:], range(1,25)))
 
 def meters_to_inches(meters):
 	return meters/0.0254
@@ -57,6 +62,17 @@ class Address(models.Model):
 class Building(models.Model):
 	building_location = models.GeometryField()
 
+	def __str__(self):
+		desc = 'Building object {}'.format(self.id)
+		try:
+			desc = str(self.addressess.all()[0])
+		except:
+			pass
+		return desc
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'building'
@@ -93,6 +109,9 @@ class ConduitType(models.Model):
 
 	def __str__(self):
 		return self.conduit_type_name
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -149,6 +168,30 @@ class FiberCable(models.Model):
 	fiber_groups_top_level_count = models.SmallIntegerField(blank=True, null=True)
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __str__(self):
+		outdoor_str = ''
+		armored_str = ''
+		if self.f_outdoor:
+			outdoor_str = ' (outdoor)'
+		if self.f_armored:
+			outdoor_str = ' (armored)'
+		cable_type = ''
+		subgroup_counts = [self.fiber_groups_top_level_count]
+		for (i=0, i<=self.fiber_groups_depth, ++i)
+			group_template = self.fibergrouptemplates.filter(Q(level=i))[0]
+			subgroup_count.append(group_template.subgroup_count)
+			group_typename = group_template.group_type.shortname
+			if i == self.fiber_groups_depth:
+				if 'ribbon' == group_typename:
+					cable_type == 'ribbon '
+				elif 'buffer tube' ==  group_typename:
+					cable_type == 'loose tube '
+		count = functools.reduce((lambda x, y: x*y), subgroup_counts)
+		return '{}: {} count {}cable{}{}'.format(self.template_name, count, outdoorstr, armored_str)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_cable'
@@ -156,6 +199,27 @@ class FiberCable(models.Model):
 
 class FiberCableSegment(models.Model):
 	fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
+
+	def __str__(self):
+		a_marking_translated = 'unkown'
+		b_marking_translated = 'unkown'
+		ends = self.fibercablesegmentend.all()
+		try:
+			a_marking_translated = '{}m'.format(ends[0].cable_meterage)
+			b_marking_translated = '{}m'.format(ends[1].cable_meterage)
+		except IndexError:
+			pass
+		if 'feet' == self.fiber_cable_segment.fiber_cable.length_units.unit_name:
+			try:
+				a_marking_translated = inches_to_ftinches(meters_to_inches(ends[0].cable_meterage))
+				b_marking_translated = inches_to_ftinches(meters_to_inches(ends[1].cable_meterage))
+			except IndexError:
+				pass
+
+		return 'cable {} segment {} at {}{}{}'.format(self.fiber_cable.id, self.id, a_marking_translated, b_marking_translated)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -171,6 +235,21 @@ class FiberCableSegmentEnd(models.Model):
 	label = models.TextField(blank=True, null=True)
 	fiber_enclosure = models.ForeignKey('FiberEnclosure', models.DO_NOTHING, blank=True, null=True)
 
+	def __str__(self):
+		marking_translated = '{}m'.format(self.in_meterage)
+		if 'feet' == self.fiber_cable_segment.fiber_cable.length_units.unit_name:
+			marking_translated = inches_to_ftinches(meters_to_inches(self.cable_meterage))
+		label_str = ''
+		tape_str = ''
+		if None != self.tape_marking:
+			tape_str = ' with tape marking {}'.format(self.tape_marking)
+		if None != self.label:
+			label_str = ' with label {}'.format(self.label)
+		return 'cable {} segment {} at {}{}{}'.format(self.fiber_cable.id, marking_translated, tape_str, label_str)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_cable_segment_end'
@@ -184,6 +263,17 @@ class FiberCableSlackCoil(models.Model):
 	out_meterage = models.FloatField(blank=True, null=True)
 	cable_sort = models.FloatField(blank=True, null=True)
 
+	def __str__(self):
+		in_marking_translated = '{}m'.format(self.in_meterage)
+		out_marking_translated = '{}.m'.format(self.out_meterage)
+		if 'feet' == self.fiber_cable.length_units.unit_name:
+			in_marking_translated = inches_to_ftinches(meters_to_inches(self.in_meterage))
+			out_marking_translated = inches_to_ftinches(meters_to_inches(self.out_meterage))
+		return 'cable {} slack coil from {} to {}'.format(self.fiber_cable.id, in_marking_translated, out_marking_translated)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_cable_slack_coil'
@@ -192,6 +282,12 @@ class FiberCableSlackCoil(models.Model):
 class FiberCableSlackCoilLocatedInUndergroundVault(models.Model):
 	underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING)
 	fiber_cable_slack_loop = models.ForeignKey(FiberCableSlackCoil, models.DO_NOTHING)
+
+	def __str__(self):
+		return '{} in vault id {}'.format(self.fiber_cable_slack_loop, self.underground_vault.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -206,6 +302,30 @@ class FiberCableTemplate(models.Model):
 	fiber_groups_top_level_count = models.SmallIntegerField(blank=True, null=True)
 	template_name = models.TextField()
 
+	def __str__(self):
+		outdoor_str = ''
+		armored_str = ''
+		if self.f_outdoor:
+			outdoor_str = ' (outdoor)'
+		if self.f_armored:
+			outdoor_str = ' (armored)'
+		cable_type = ''
+		subgroup_counts = [self.fiber_groups_top_level_count]
+		for (i=0, i<=self.fiber_groups_depth, ++i)
+			group_template = self.fibergrouptemplates.filter(Q(level=i))[0]
+			subgroup_count.append(group_template.subgroup_count)
+			group_typename = group_template.group_type.shortname
+			if i == self.fiber_groups_depth:
+				if 'ribbon' == group_typename:
+					cable_type == 'ribbon '
+				elif 'buffer tube' ==  group_typename:
+					cable_type == 'loose tube '
+		count = functools.reduce((lambda x, y: x*y), subgroup_counts)
+		return '{}: {} count {}cable{}{}'.format(self.template_name, count, outdoorstr, armored_str)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_cable_template'
@@ -218,6 +338,16 @@ class FiberConnection(models.Model):
 	b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_side_b')
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __str__(self):
+		#TODO: show extra details of inheriting class based off entries in the fiber_connection_meta_instance_inheritance
+		if False == self.built:
+			return 'planned fiber connection {}, between FE {} & FE {}'.format(self.id, self.connected_fiber_end_a.id, self.connected_fiber_end_b.id)
+		else:
+			return 'planned fiber connection {}, between FE {} & FE {}'.format(self.id, self.connected_fiber_end_a.id, self.connected_fiber_end_b.id)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_connection'
@@ -226,6 +356,12 @@ class FiberConnection(models.Model):
 class FiberConnectionEnclosurePortTemplate(models.Model):
 	a_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_enclosure_template_a')
 	b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_enclosure_template_b')
+
+	def __str__(self):
+		return 'Enclosure template {} port template {}: {}x{}'.format(planned_str, self.id, self.a_optical_connector_type, self.b_optical_connector_type)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -249,6 +385,16 @@ class FiberEnclosure(models.Model):
 	enclosure_model = models.TextField(blank=True, null=True)
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __str__(self):
+		if False = self.built:
+			planned_str = 'planned '
+		else:
+			planned_str = ''
+		return '{}fiber enclosure id {}: {} {}'.format(planned_str, self.id, self.manufacterer_name, self.enclosure_model)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_enclosure'
@@ -258,6 +404,12 @@ class FiberEnclosureCoverage(models.Model):
 	coverage_area = models.PolygonField()
 	fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING)
 
+	def __str__(self):
+		return 'fiber enclosure id {} coverage'.format(self.fiber_enclosure.id)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_enclosure_coverage'
@@ -266,6 +418,12 @@ class FiberEnclosureCoverage(models.Model):
 class FiberEnclosureLocatedInUndergroundVault(models.Model):
 	fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING)
 	underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING)
+
+	def __str__(self):
+		return 'fiber enclosure id {} in vault id {}'.format(self.fiber_enclosure.id, self.underground_vault.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -277,6 +435,12 @@ class FiberEnclosureTemplate(models.Model):
 	enclosure_model = models.TextField(blank=True, null=True)
 	template_name = models.TextField()
 
+	def __str__(self):
+		return '{}: {} {}'.format(self.template_name, self.manufacterer_name, self.enclosure_model)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_enclosure_template'
@@ -284,6 +448,16 @@ class FiberEnclosureTemplate(models.Model):
 
 class FiberEnd(models.Model):
 	optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True)
+
+	def __str__(self):
+		# TODO: check fiber_end_meta_instance_inheritance and show extra data based on type
+		if None != self.optical_connector_type:
+			return 'Fiber end id # {}, connector type {}'.format(self.id, self.optical_connector_type)
+		else:
+			return 'Fiber end id # {}'.format(self.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -308,6 +482,12 @@ class FiberGroup(models.Model):
 	level = models.SmallIntegerField(blank=True, null=True)
 	fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
 
+	def __str__(self):
+		return 'fiber cable {} subgroup level {}, type "{}", {} children'.format(self.fiber_cable.id, self.group_level, self.group_type.shortname, self.subgroup_count)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_group'
@@ -320,6 +500,12 @@ class FiberGroupTemplate(models.Model):
 	level = models.SmallIntegerField(blank=True, null=True)
 	fiber_cable_template = models.ForeignKey(FiberCableTemplate, models.DO_NOTHING)
 
+	def __str__(self):
+		return 'fiber cable template {} subgroup template level {}, type "{}", {} children'.format(self.fiber_cable_template.id, self.group_level, self.group_type.shortname, self.subgroup_count)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_group_template'
@@ -328,6 +514,12 @@ class FiberGroupTemplate(models.Model):
 class FiberGroupTypes(models.Model):
 	id = models.SmallIntegerField(primary_key=True)
 	shortname = models.TextField(blank=True, null=True)
+
+	def __str__(self):
+		return self.shortname
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -339,6 +531,17 @@ class FiberIdentifierIndex(models.Model):
 	group_level = models.SmallIntegerField(blank=True, null=True)
 	fiber = models.ForeignKey(Fiber, models.DO_NOTHING)
 
+	def __str__(self):
+		try:
+			group_type_name = self.fiber.cable.fibergroups.filter(Q(level=self.group_level)).group_type.shortname
+		except:
+			group_type_name = '<level {} group type>'.format(self.group_level)
+		color = indextocolor[self.group_index]
+		return '{} {} in fiber cable {}, fiber id {}'.format(color, group_type_name, self.fiber.cable.id, self.fiber.id)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'fiber_identifier_index'
@@ -348,6 +551,19 @@ class FiberSplice(models.Model):
 	fiber_connection = models.ForeignKey(FiberConnection, models.DO_NOTHING, unique=True)
 	fusion = models.BooleanField(blank=True, null=True)
 	estimated_loss = models.FloatField(blank=True, null=True)
+
+	def __str__(self):
+		planned_str = ''
+		fusion_str = ''
+		if False == self.fiber_connection.built:
+			planned_str = 'planned '
+		if self.fusion:
+			fusion_str = 'fusion '
+
+		return '{}{}splice {}, fiber connection {}, between FE {} & FE {}'.format(planned_str, fusion_str, self.id, self.fiber_connection.id, self.fiber_connection.connected_fiber_end_a.id, self.fiber_connection.connected_fiber_end_b.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -362,6 +578,12 @@ class HistoryBool(models.Model):
 	before_value = models.BooleanField(blank=True, null=True)
 	after_value = models.BooleanField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_bool'
@@ -371,6 +593,12 @@ class HistoryBoolDeletion(models.Model):
 	history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
 	column_name = models.TextField()
 	before_value = models.BooleanField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}, previous value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -385,6 +613,12 @@ class HistoryGeometryLinestring(models.Model):
 	before_value = models.LineStringField(blank=True, null=True)
 	after_value = models.LineStringField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_geometry_linestring'
@@ -394,6 +628,12 @@ class HistoryGeometryLinestringDeletion(models.Model):
 	history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
 	column_name = models.TextField()
 	before_value = models.LineStringField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}, previous value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -408,6 +648,12 @@ class HistoryGeometryPoint(models.Model):
 	before_value = models.PointField(blank=True, null=True)
 	after_value = models.PointField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_geometry_point'
@@ -417,6 +663,12 @@ class HistoryGeometryPointDeletion(models.Model):
 	history_row_deletion = models.ForeignKey('HistoryRowDeletion', models.DO_NOTHING)
 	column_name = models.TextField()
 	before_value = models.PointField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}, previous value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -430,6 +682,12 @@ class HistoryInteger(models.Model):
 	username = models.TextField(blank=True, null=True)
 	before_value = models.IntegerField(blank=True, null=True)
 	after_value = models.IntegerField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -454,6 +712,12 @@ class HistoryReal(models.Model):
 	before_value = models.FloatField(blank=True, null=True)
 	after_value = models.FloatField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_real'
@@ -475,6 +739,12 @@ class HistoryRowCreation(models.Model):
 	username = models.TextField(blank=True, null=True)
 	creation = models.DateTimeField()
 
+	def __str__(self):
+		return 'Creation: Table {}, id {}, column {}, by {} at {}'.format(self.table_name, self.table_id, self.username, self.creation)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_row_creation'
@@ -485,6 +755,12 @@ class HistoryRowDeletion(models.Model):
 	table_row_id = models.IntegerField()
 	username = models.TextField(blank=True, null=True)
 	deletion = models.DateTimeField()
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}'.format(self.table_name, self.table_row_id, self.username, self.deletion)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -499,6 +775,12 @@ class HistorySmallint(models.Model):
 	before_value = models.SmallIntegerField(blank=True, null=True)
 	after_value = models.SmallIntegerField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_smallint'
@@ -508,6 +790,12 @@ class HistorySmallintDeletion(models.Model):
 	history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
 	column_name = models.TextField()
 	before_value = models.SmallIntegerField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}, previous value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -522,6 +810,12 @@ class HistoryText(models.Model):
 	before_value = models.TextField(blank=True, null=True)
 	after_value = models.TextField(blank=True, null=True)
 
+	def __str__(self):
+		return 'Change: Table {}, id {}, column {}, by {} at {}, previous value {}, new value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value, self.after_value)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'history_text'
@@ -531,6 +825,12 @@ class HistoryTextDeletion(models.Model):
 	history_row_deletion = models.ForeignKey(HistoryRowDeletion, models.DO_NOTHING)
 	column_name = models.TextField()
 	before_value = models.TextField(blank=True, null=True)
+
+	def __str__(self):
+		return 'Deletion: Table {}, id {}, column {}, by {} at {}, previous value {}'.format(self.history_row_deletion.table_name, self.history_row_deletion.table_row_id, self.column_name, self.history_row_deletion.username, self.history_row_deletion.deletion, self.before_value)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -544,6 +844,9 @@ class LengthUnits(models.Model):
 
 	def __str__(self):
 		return self.unit_name
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -588,6 +891,12 @@ class MapBookmark(models.Model):
 	zoom_level = models.IntegerField(blank=True, null=True)
 	bookmark_name = models.TextField()
 
+	def __str__(self):
+		return 'Bookmark {}'.format(self.bookmark_name)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'map_bookmark'
@@ -597,6 +906,15 @@ class OpticalConnectorTypes(models.Model):
 	id = models.SmallIntegerField(primary_key=True)
 	name = models.TextField()
 	gender = models.CharField(max_length=1, blank=True, null=True)
+
+	def __str__(self):
+		if gender:
+			return 'Connector type {}({})'.format(self.name, self.gender.lower())
+		else:
+			return 'Connector type {}'.format(self.name)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -611,6 +929,15 @@ class OpticalSplitter(models.Model):
 	containing_fiber_enclosure = models.ForeignKey(FiberEnclosure, models.DO_NOTHING, db_column='containing_fiber_enclosure', blank=True, null=True)
 	built = models.DateTimeField(blank=True, null=True)
 
+	def __str__(self):
+		if built:
+			return 'Splitter {}: {}x{} {} {}'.format(self.id, str(self.inputs_count), str(self.outputs_count), self.splitter_type.type_label, self.splitter_style.style_label)
+		else:
+			return 'Planned splitter {}: {}x{} {} {}'.format(self.id, str(self.inputs_count), str(self.outputs_count), self.splitter_type.type_label, self.splitter_style.style_label)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'optical_splitter'
@@ -621,6 +948,15 @@ class OpticalSplitterInput(models.Model):
 	input_label = models.TextField(blank=True, null=True)
 	optical_splitter = models.ForeignKey(OpticalSplitter, models.DO_NOTHING)
 	fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING, unique=True)
+
+	def __str__(self):
+		if self.power_drop and power_drop != 0.0:
+			return 'Splitter {} input {}, -{:1.3}dB, fiber end id {}'.format(self.optical_splitter.id, self.input_label, self.power_drop, self.fiber_end.id)
+		else:
+		return 'Splitter {} output {}, fiber end id {}'.format(self.optical_splitter.id, self.input_label, self.fiber_end.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -633,6 +969,12 @@ class OpticalSplitterInputTemplate(models.Model):
 	optical_splitter_template = models.ForeignKey('OpticalSplitterTemplate', models.DO_NOTHING)
 	fiber_end = models.ForeignKey('OpticalSplitterTemplateFiberEnd', models.DO_NOTHING, unique=True)
 
+	def __str__(self):
+		return 'Splitter template {} input {}, -{:1.3}dB, fiber end id {}'.format(self.optical_splitter_template.template_name, self.input_label, self.power_drop, self.fiber_end.id)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'optical_splitter_input_template'
@@ -643,6 +985,15 @@ class OpticalSplitterOutput(models.Model):
 	output_label = models.TextField(blank=True, null=True)
 	optical_splitter = models.ForeignKey(OpticalSplitter, models.DO_NOTHING)
 	fiber_end = models.ForeignKey(FiberEnd, models.DO_NOTHING, unique=True)
+
+	def __str__(self):
+		if self.power_drop and power_drop != 0.0:
+			return 'Splitter {} output {}, -{:1.3}dB, fiber end id {}'.format(self.optical_splitter.id, self.output_label, self.power_drop, self.fiber_end.id)
+		else:
+		return 'Splitter {} output {}, fiber end id {}'.format(self.optical_splitter.id, self.output_label, self.fiber_end.id)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -655,14 +1006,28 @@ class OpticalSplitterOutputTemplate(models.Model):
 	optical_splitter = models.ForeignKey('OpticalSplitterTemplate', models.DO_NOTHING)
 	fiber_end = models.ForeignKey('OpticalSplitterTemplateFiberEnd', models.DO_NOTHING, unique=True)
 
+	def __str__(self):
+		return 'Splitter template {} output {}, -{:1.3}dB, fiber end id {}'.format(self.optical_splitter.template_name, self.output_label, self.power_drop, self.fiber_end.id)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'optical_splitter_output_template'
 
 
 class OpticalSplitterStyles(models.Model):
+	'Splitter packaging types: Rackmount, steel tube, PVC box, etc'
+
 	id = models.SmallIntegerField(primary_key=True)
 	style_label = models.TextField()
+
+	def __str__(self):
+		return self.style_label
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -675,6 +1040,12 @@ class OpticalSplitterTemplate(models.Model):
 	splitter_type = models.ForeignKey('OpticalSplitterTypes', models.DO_NOTHING, blank=True, null=True)
 	splitter_style = models.ForeignKey(OpticalSplitterStyles, models.DO_NOTHING, blank=True, null=True)
 	template_name = models.TextField()
+
+	def __str__(self):
+		return '{}: {}x{} {} {}'.format(self.template_name, str(self.inputs_count), str(self.outputs_count), self.splitter_type.type_label, self.splitter_style.style_label)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
