@@ -153,6 +153,20 @@ class EnclosurePortTemplate(models.Model):
 class Fiber(models.Model):
 	cable = models.ForeignKey('FiberCable', models.DO_NOTHING)
 
+	def __str__(self):
+		id_indexes = sorted(self.fiberidentifierindexs.objects.all(), key=(lambda x: x.group_level))
+		index_types = [ x.group_type.indexname for x in sorted(self.cable.fiber_group.objects().all(), key=(lambda x: x.level)) ]
+		indexdesc = [ (indextocolor[id_index], indextype) for id_index, indextype in zip(id_indexes, index_types)  ]
+
+		indexstr = ','.join(['{} {}'.format(color, indextype) for color, indextype in indexdesc])
+
+		#TODO: add descriptive parts for ends of fiber -- tell where this specific fiber runs to/from, what case it ends in
+		return '{} fiber in cable #{}'.format(indexstr, self.cable.id)
+
+	def __repr__(self):
+		return self.__dict__
+
+
 	class Meta:
 		managed = False
 		db_table = 'fiber'
