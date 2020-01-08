@@ -251,7 +251,7 @@ class FiberCable(models.Model):
 			outdoor_str = ' (armored)'
 		cable_type = ''
 		subgroup_counts = [self.fiber_groups_top_level_count]
-		for (i=0, i<=self.fiber_groups_depth, ++i)
+		for i in range(0, self.fiber_groups_depth+1)
 			group_template = self.fibergrouptemplates.filter(Q(level=i))[0]
 			subgroup_count.append(group_template.subgroup_count)
 			group_typename = group_template.group_type.shortname
