@@ -147,6 +147,21 @@ class ConduitVaultEntryOrEnd(models.Model):
 	underground_vault = models.ForeignKey('UndergroundVault', models.DO_NOTHING, blank=True, null=True)
 	conduit = models.ForeignKey(Conduit, models.DO_NOTHING)
 
+	def __str__(self):
+		if self.f_end:
+			description = 'Conduit {} end'.format(self.conduit)
+		elif self.underground_vault:
+			description = 'Conduit vault {} entry'.format(self.underground_vault.id)
+		if self.meterage:
+			if 'ft' == self.conduit.length_units.shortsymbol:
+				description += 'at {}'.format(inches_to_ftinches(meters_to_ftinches(self.meterage)))
+			else:
+				description += 'at {} m'.format(self.meterage)
+		return description
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'conduit_vault_entry_or_end'
@@ -157,6 +172,12 @@ class EnclosurePort(models.Model):
 	port_label = models.TextField(blank=True, null=True)
 	fiber_connection = models.ForeignKey('FiberConnection', models.DO_NOTHING, unique=True)
 
+	def __str__(self):
+		return 'port {} on enclosure {}'.format(self.port_label, self.fiber_enclosure)
+
+	def __repr__(self):
+		return self.__dict__
+
 	class Meta:
 		managed = False
 		db_table = 'enclosure_port'
@@ -166,6 +187,12 @@ class EnclosurePortTemplate(models.Model):
 	fiber_enclosure_template = models.ForeignKey('FiberEnclosureTemplate', models.DO_NOTHING)
 	port_label = models.TextField(blank=True, null=True)
 	fiber_connection_template = models.ForeignKey('FiberConnectionEnclosurePortTemplate', models.DO_NOTHING, unique=True)
+
+	def __str__(self):
+		return 'port {} on enclosure template {}'.format(self.port_label, self.fiber_enclosure_template)
+
+	def __repr__(self):
+		return self.__dict__
 
 	class Meta:
 		managed = False
@@ -182,8 +209,19 @@ class Fiber(models.Model):
 
 		indexstr = ','.join(['{} {}'.format(color, indextype) for color, indextype in indexdesc])
 
-		#TODO: add descriptive parts for ends of fiber -- tell where this specific fiber runs to/from, what case it ends in
-		return '{} fiber in cable #{}'.format(indexstr, self.cable.id)
+		enddescriptions = []
+		for cablefiberend in self.cablefiberends.objects.all():
+			enddesc = ''
+			fcse = str(cablefiberend.fiber_cable_segment_end)
+			if None != fcse.fiber_enclosure:
+				enddesc += ' in enclosure {}'.format(str(fcse.fiber_enclosure))
+			enddescriptions.append(enddesc)
+		if len(enddescriptions) == 2:
+			return '{} fiber in cable #{} from {} to {}'.format(indexstr, self.cable.id, enddescriptions[0], enddescriptions[1])
+		elif len(enddescriptions) == 1:
+			return '{} fiber in cable #{} with end {}'.format(indexstr, self.cable.id, enddescriptions[0])
+		else:
+			return '{} fiber in cable #{}'.format(indexstr, self.cable.id)
 
 	def __repr__(self):
 		return self.__dict__
