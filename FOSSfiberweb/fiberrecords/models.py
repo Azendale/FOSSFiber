@@ -553,7 +553,7 @@ class FiberGroup(models.Model):
 	fiber_cable = models.ForeignKey(FiberCable, models.DO_NOTHING)
 
 	def __str__(self):
-		return 'fiber cable {} subgroup level {}, type "{}", {} children'.format(self.fiber_cable.id, self.group_level, self.group_type.shortname, self.subgroup_count)
+		return 'fiber cable {} subgroup level {}, type "{}", {} children'.format(self.fiber_cable.id, self.level, self.group_type.shortname, self.subgroup_count)
 
 	def __repr__(self):
 		return self.__dict__
