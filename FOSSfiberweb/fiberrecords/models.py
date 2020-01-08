@@ -251,7 +251,7 @@ class FiberCable(models.Model):
 			outdoor_str = ' armored'
 		cable_type = ''
 		subgroup_counts = [self.fiber_groups_top_level_count]
-		subgroup_counts.extend([ x.subgroup_count for x in self.fibergroups_set.all() ])
+		subgroup_counts.extend([ x.subgroup_count for x in self.fibergroup_set.all() ])
 		try:
 			group_typename = ' ' + sorted(self.fiber_groups.objects.all(), key=(lambda x: x.level))[0].group_type.indexname
 		except IndexError:
