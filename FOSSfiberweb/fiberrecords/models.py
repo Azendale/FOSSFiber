@@ -1227,9 +1227,9 @@ class UndergroundVault(models.Model):
 
 	def __str__(self):
 		if 'feet' == self.length_units.unit_name:
-			dimensions_strings = [ str(int(meters_to_inches(getattr(self, x, 0.0)))) for x in ['depth', 'width', 'length']]
+			dimensions_strings = [ inches_to_ftinches(meters_to_inches(getattr(self, x, 0.0))) for x in ['depth', 'width', 'length']]
 		else:
-			dimensions_strings = [ x for x in ['depth', 'width', 'length']]
+			dimensions_strings = [ getattr(self, x, 0.0) for x in ['depth', 'width', 'length']]
 
 		return '{} {} {} {}'.format(self.manufacturer_name, self.vault_model, ' x '.join(dimensions_strings), self.length_units.unit_shortsymbol)
 
