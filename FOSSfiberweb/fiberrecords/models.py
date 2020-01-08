@@ -257,7 +257,7 @@ class FiberCable(models.Model):
 		except IndexError:
 			group_typename = ''
 		count = functools.reduce((lambda x, y: x*y), subgroup_counts)
-		return '{} count{}{}{} cable'.format(count, outdoor_str, armored_str)
+		return '{} count{}{}{} cable'.format(count, group_typename, outdoor_str, armored_str)
 
 	def __repr__(self):
 		return self.__dict__
