@@ -253,7 +253,7 @@ class FiberCable(models.Model):
 		subgroup_counts = [self.fiber_groups_top_level_count]
 		subgroup_counts.extend([ x.subgroup_count for x in self.fibergroup_set.all() ])
 		try:
-			group_typename = ' ' + sorted(self.fibergroup_set.all(), key=(lambda x: x.level))[0].group_type.indexname
+			group_typename = ' ' + sorted(self.fibergroup_set.all(), key=(lambda x: x.level))[0].group_type.shortname
 		except IndexError:
 			group_typename = ''
 		count = functools.reduce((lambda x, y: x*y), subgroup_counts)
