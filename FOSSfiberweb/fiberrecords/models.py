@@ -1231,7 +1231,7 @@ class UndergroundVault(models.Model):
 		else:
 			dimensions_strings = [ str(getattr(self, x, 0.0)) for x in ['depth', 'width', 'length']]
 
-		return '{} {} {} {}'.format(self.manufacturer_name, self.vault_model, ' x '.join(dimensions_strings), self.length_units.unit_shortsymbol)
+		return '{} {} {}'.format(self.manufacturer_name, self.vault_model, ' x '.join(dimensions_strings))
 
 	def __repr__(self):
 		return self.__dict__
