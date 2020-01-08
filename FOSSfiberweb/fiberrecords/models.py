@@ -120,6 +120,8 @@ class Conduit(models.Model):
 
 	def __str__(self):
 		underground_str = ''
+		if self.underground:
+			underground_str = 'underground '
 		return '{} {}conduit'.format(self.conduit_type, underground_str)
 
 	def __repr__(self):
