@@ -584,6 +584,7 @@ class FiberGroupTemplate(models.Model):
 class FiberGroupTypes(models.Model):
 	id = models.SmallIntegerField(primary_key=True)
 	shortname = models.TextField(blank=True, null=True)
+	indexname = models.TextField(blank=True, null=True)
 
 	def __str__(self):
 		return self.shortname

@@ -199,9 +199,12 @@ INSERT INTO public.length_units (id, unit_name, unit_shortsymbol) VALUES (E'2', 
 CREATE TABLE public.fiber_group_types (
 	id smallserial NOT NULL,
 	shortname text DEFAULT 'buffer tube',
+	indexname text,
 	CONSTRAINT fiber_group_types_pk PRIMARY KEY (id)
 
 );
+-- ddl-end --
+COMMENT ON COLUMN public.fiber_group_types.indexname IS 'What to call the grouping, when used with indexes. So for an object with shortname=loose tube, indexname=buffer tube, for use in things like "blue buffer tube".';
 -- ddl-end --
 ALTER TABLE public.fiber_group_types OWNER TO postgres;
 -- ddl-end --
@@ -286,6 +289,8 @@ CREATE TABLE public.optical_splitter_types (
 
 );
 -- ddl-end --
+COMMENT ON TABLE public.optical_splitter_types IS 'Type of splitter -- PLC, FBT, etc.';
+-- ddl-end --
 COMMENT ON COLUMN public.optical_splitter_types.symmetric_outputs IS 'Whether this splitter has a (theoretical - not the factory test numbers) even output power for the outputs.';
 -- ddl-end --
 ALTER TABLE public.optical_splitter_types OWNER TO postgres;
@@ -306,6 +311,8 @@ CREATE TABLE public.optical_splitter_styles (
 	CONSTRAINT optical_splitter_styles_pk PRIMARY KEY (id)
 
 );
+-- ddl-end --
+COMMENT ON TABLE public.optical_splitter_styles IS 'Splitter packinging styles - rackmount vs metal tube vs PVC cartridge, etc.';
 -- ddl-end --
 ALTER TABLE public.optical_splitter_styles OWNER TO postgres;
 -- ddl-end --
