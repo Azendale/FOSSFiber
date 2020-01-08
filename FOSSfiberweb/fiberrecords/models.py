@@ -248,7 +248,7 @@ class FiberCable(models.Model):
 		if self.f_outdoor:
 			outdoor_str = ' outdoor'
 		if self.f_armored:
-			outdoor_str = ' armored'
+			armored_str = ' armored'
 		cable_type = ''
 		subgroup_counts = [self.fiber_groups_top_level_count]
 		subgroup_counts.extend([ x.subgroup_count for x in self.fibergroup_set.all() ])
