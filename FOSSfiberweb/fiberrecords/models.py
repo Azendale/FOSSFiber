@@ -1027,7 +1027,7 @@ class OpticalSplitterInput(models.Model):
 		if self.power_drop and power_drop != 0.0:
 			return 'Splitter {} input {}, -{:1.3}dB, fiber end id {}'.format(self.optical_splitter.id, self.input_label, self.power_drop, self.fiber_end.id)
 		else:
-		return 'Splitter {} output {}, fiber end id {}'.format(self.optical_splitter.id, self.input_label, self.fiber_end.id)
+			return 'Splitter {} output {}, fiber end id {}'.format(self.optical_splitter.id, self.input_label, self.fiber_end.id)
 
 	def __repr__(self):
 		return self.__dict__
