@@ -118,6 +118,14 @@ class Conduit(models.Model):
 	underground = models.BooleanField(blank=True, null=True)
 	length_units = models.ForeignKey('LengthUnits', models.DO_NOTHING, blank=True, null=True)
 
+	def __str__(self):
+		underground_str = ''
+		return '{} {}conduit'.format(self.conduit_type, underground_str)
+
+	def __repr__(self):
+		return self.__dict__
+
+
 	class Meta:
 		managed = False
 		db_table = 'conduit'
