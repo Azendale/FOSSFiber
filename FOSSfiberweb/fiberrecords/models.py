@@ -45,7 +45,7 @@ def inches_to_meters(inches):
 	return inches*0.0254
 
 def inches_to_ftinches(inches):
-	return int(inches/12), inches%12
+	return '{}\' {}"'.format(int(inches/12), inches%12)
 
 def ftinches_to_inches(feet, inches):
 	return (feet*12)+inches
