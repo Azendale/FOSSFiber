@@ -460,7 +460,7 @@ class FiberEnclosure(models.Model):
 	built = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
-		if False = self.built:
+		if False == self.built:
 			planned_str = 'planned '
 		else:
 			planned_str = ''
