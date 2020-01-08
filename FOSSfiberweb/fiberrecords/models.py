@@ -246,22 +246,18 @@ class FiberCable(models.Model):
 		outdoor_str = ''
 		armored_str = ''
 		if self.f_outdoor:
-			outdoor_str = ' (outdoor)'
+			outdoor_str = ' outdoor'
 		if self.f_armored:
-			outdoor_str = ' (armored)'
+			outdoor_str = ' armored'
 		cable_type = ''
 		subgroup_counts = [self.fiber_groups_top_level_count]
-		for i in range(0, self.fiber_groups_depth+1):
-			group_template = self.fibergrouptemplates.filter(Q(level=i))[0]
-			subgroup_count.append(group_template.subgroup_count)
-			group_typename = group_template.group_type.shortname
-			if i == self.fiber_groups_depth:
-				if 'ribbon' == group_typename:
-					cable_type == 'ribbon '
-				elif 'buffer tube' ==  group_typename:
-					cable_type == 'loose tube '
+		subgroup_counts.extend([ x.subgroup_count for x in self.fiber_groups.objects.all() ])
+		try:
+			group_typename = ' ' + sorted(self.fiber_groups.objects.all(), key=(lamba x: x.level))[0].group_type.indexname
+		except IndexError:
+			group_typename = ''
 		count = functools.reduce((lambda x, y: x*y), subgroup_counts)
-		return '{}: {} count {}cable{}{}'.format(self.template_name, count, outdoorstr, armored_str)
+		return '{} count{}{}{} cable'.format(count, outdoorstr, armored_str)
 
 	def __repr__(self):
 		return self.__dict__
