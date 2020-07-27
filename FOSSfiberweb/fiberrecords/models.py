@@ -516,7 +516,7 @@ class FiberEnclosureTemplate(models.Model):
 	template_name = models.TextField()
 
 	def __str__(self):
-		return '{}: {} {}'.format(self.template_name, self.manufacterer_name, self.enclosure_model)
+		return '{}: {} {}'.format(self.template_name, self.manufacturer_name, self.enclosure_model)
 
 	def __repr__(self):
 		return self.__dict__
