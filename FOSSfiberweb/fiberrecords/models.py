@@ -438,7 +438,7 @@ class FiberConnectionEnclosurePortTemplate(models.Model):
 	b_optical_connector_type = models.ForeignKey('OpticalConnectorTypes', models.DO_NOTHING, blank=True, null=True, related_name='optical_connector_type_as_enclosure_template_b')
 
 	def __str__(self):
-		return 'Enclosure template {} port template {}: {}x{}'.format(planned_str, self.id, self.a_optical_connector_type, self.b_optical_connector_type)
+		return 'Enclosure template {} port template {}: {}x{}'.format(self.id, self.a_optical_connector_type, self.b_optical_connector_type)
 
 	def __repr__(self):
 		return self.__dict__
@@ -989,7 +989,7 @@ class OpticalConnectorTypes(models.Model):
 	gender = models.CharField(max_length=1, blank=True, null=True)
 
 	def __str__(self):
-		if gender:
+		if self.gender:
 			return 'Connector type {}({})'.format(self.name, self.gender.lower())
 		else:
 			return 'Connector type {}'.format(self.name)
